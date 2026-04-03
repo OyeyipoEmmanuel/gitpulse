@@ -4,7 +4,7 @@ import { signInWithGithub } from "../../auth/signInWithGithub"
 import { useAuthStore } from "../../store/authStore"
 
 export default function TopNav() {
-    const {user, loading} = useAuthStore()
+    const {loading} = useAuthStore()
     if(loading) return;
 
   return (
