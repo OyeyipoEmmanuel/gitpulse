@@ -1,4 +1,5 @@
 
+import { Outlet } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
 
 const Dashboard = () => {
@@ -7,7 +8,12 @@ const Dashboard = () => {
         console.log(user?.user_metadata)
     }
   return (
-    <div>dashboard</div>
+    <main className="flex h-screen bg-[#0D1117]">
+      {/* <Sidenav /> */}
+      <section className="flex-1 overflow-y-auto">
+        <Outlet /> 
+      </section>
+    </main>
   )
 }
 
