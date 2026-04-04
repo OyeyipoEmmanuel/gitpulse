@@ -21,3 +21,6 @@ export const ProtectedRoute = ()=>{
 
     return session ? <Outlet/> : <Navigate to="/" replace/>
 }
+
+//Dashboards Routes
+//Individual Dashboard Routes
