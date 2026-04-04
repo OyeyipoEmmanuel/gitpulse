@@ -4,23 +4,45 @@ import LandingLayout, { ProtectedRoute } from "../components/layouts/Layouts";
 import AuthCallback from "../pages/auth/AuthCallback";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import SelectAcount from "../pages/SelectAccount/SelectAcount";
+import IndividualDashboard from "@/pages/Dashboard/individual/IndividualDashboard";
+import OrganizationDashboard from "@/pages/Dashboard/organization/OrganizationDashboard";
 
 export const routes: RouteObject[] = [
     {
         element: <LandingLayout />,
         children: [
-            { path: "/", element: <LandingPage /> },
+            {
+                path: "/",
+                element: <LandingPage />
+            },
+            {
+                path: "/auth/callback",
+                element: <AuthCallback />
+            },
         ]
     },
-    {
-        path: "/auth/callback",
-        element: <AuthCallback />
-    },
+
     {
         element: <ProtectedRoute />,
         children: [
+
+            //Account Selection route
             { path: "/:user_name/select-account", element: <SelectAcount /> },
-            { path: "/dashboard", element: <Dashboard /> },
+            
+            //Dashboard routes
+            {
+                path: "/dashboard",
+                element: <Dashboard />,
+                children: [
+                    {
+                        path: "personal/:username", element: <IndividualDashboard />
+                    },
+                    {
+                        path: "org/:orgname", element: <OrganizationDashboard />
+                    },
+                ]
+            }
+
         ]
     }
 ]
