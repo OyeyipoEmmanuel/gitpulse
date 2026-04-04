@@ -1,18 +1,22 @@
 // import TopNav from "../../components/navbars/TopNav"
+import { LoadingSpinner } from "@/components/ui/spinner"
 import { useGetAccountsToDisplay } from "../../features/global/fetchAllAccount"
+import { useNavigate } from "react-router-dom"
 
 
 const SelectAcount = () => {
+    const navigate = useNavigate()
 
     //Fetch accounts
     const { isPending, error, data } = useGetAccountsToDisplay()
-    if (isPending) {
-        return;
-    }
-    if (error) {
-        console.log(error)
-    }
-    console.log(data?.orgs)
+
+    if (isPending) return <LoadingSpinner className="text-green-500 w-32 h-32" />
+
+    if (error) return (
+        <div className="text-red-500 text-center pt-32">
+            Something went wrong. Please try again.
+        </div>
+    )
 
     return (
         <main className="bg-primaryBg w-full">
@@ -28,8 +32,8 @@ const SelectAcount = () => {
                 <section className="grid grid-cols-1 gap-3">
 
                     {/* For User */}
-                    {!isPending && !error && data.user && (
-                        <div className="bg-[#161B22] border border-[#2A2F36] rounded-md p-3 flex flex-row justify-between items-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer" >
+                    {data.user && (
+                        <div className="bg-[#161B22] border border-[#2A2F36] rounded-md p-3 flex flex-row justify-between items-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer" onClick={()=>navigate(`/dashboard/personal/${data.user.login}`)}>
                             <div className="flex space-x-3 items-center md:space-x-6">
                                 {/* img */}
                                 <img src={data.user.avatar_url} alt={`${data.user.name}`} className="rounded-xl" width={48} height={48} />
@@ -47,8 +51,8 @@ const SelectAcount = () => {
                     )}
 
                     {/* For Organizations */}
-                    {!isPending && !error && data.orgs && data.orgs.map((each: any) => (
-                        <div className="bg-[#161B22] border border-[#2A2F36] rounded-md p-3 flex flex-row justify-between items-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
+                    {data.orgs && data.orgs.map((each: any) => (
+                        <div className="bg-[#161B22] border border-[#2A2F36] rounded-md p-3 flex flex-row justify-between items-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer" onClick={()=>navigate(`/dashboard/org/${each.login}`)}>
                             <div className="flex space-x-3 items-center md:space-x-6 w-[80%]">
                                 {/* img */}
                                 <img src={each.avatar_url} alt={`${each.name}`} className="rounded-xl" width={48} height={48} />
