@@ -1,6 +1,6 @@
 // import TopNav from "../../components/navbars/TopNav"
 import { LoadingSpinner } from "@/components/ui/spinner"
-import { useGetAccountsToDisplay } from "../../features/global/fetchAllAccount"
+import { useGetAccountsToDisplay } from "../../services/fetchAllAccount"
 import { useNavigate } from "react-router-dom"
 
 
@@ -23,7 +23,7 @@ const SelectAcount = () => {
             {/* <TopNav /> */}
             <section className="pt-32 min-h-screen max-w-xs mx-auto md:max-w-3xl flex flex-col items-center justify-center text-white">
                 <div className="flex flex-col pb-12 space-y-1 text-center justify-center items-center">
-                    <img src="/images/logo.svg" alt="GitPulse Logo" width={40} height={40} className="animate-pulse" />
+                    <img src="/images/logo.svg" alt="GitPulse Logo" width={40} height={40} className="animate-pulse" loading="lazy"/>
 
                     <h1 className="font-semibold text-xl md:text-3xl">Select account</h1>
                     <p className="text-graySubtextColor">Choose an account to view analytics for</p>
@@ -36,7 +36,7 @@ const SelectAcount = () => {
                         <div className="bg-[#161B22] border border-[#2A2F36] rounded-md p-3 flex flex-row justify-between items-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer" onClick={()=>navigate(`/dashboard/personal/${data.user.login}`)}>
                             <div className="flex space-x-3 items-center md:space-x-6">
                                 {/* img */}
-                                <img src={data.user.avatar_url} alt={`${data.user.name}`} className="rounded-xl" width={48} height={48} />
+                                <img src={data.user.avatar_url} alt={`${data.user.name}`} className="rounded-xl" width={48} height={48} loading="lazy"/>
                                 {/* name */}
                                 <span className="space-y-2">
                                     <h1 className="font-semibold md:text-xl">{data.user.name}</h1>
