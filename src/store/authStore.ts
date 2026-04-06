@@ -1,41 +1,47 @@
 import type { Session, User } from "@supabase/supabase-js";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { supabase } from "../lib/supabase";
 
 interface AuthState {
-    user: User | null
-    session: Session | null
-    loading: boolean
-    initialize: () => () => void
+  user: User | null;
+  session: Session | null;
+  providerToken: string | null;
+  loading: boolean;
+  initialize: () => () => void;
 }
 
-// let ses: Session | null;
-// supabase.auth.getSession().then(({data: {session}}) => {
-//     ses = session
-// })
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      session: null,
+      providerToken: null, 
+      loading: true,
 
-export const useAuthStore = create<AuthState>((set)=>({
-    user: null,
-    session: null,
-    loading: true,
-    
-    initialize: ()=>{
-        supabase.auth.getSession().then(({ data: { session }}) =>{
-            set({
-                session,
-                user: session?.user,
-                loading: false
-            })
-        })
+      initialize: () => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          set({
+            session,
+            user: session?.user,
+            loading: false,
+          });
+        });
 
-        //Listen for changes
-        const { data: { subscription }} = supabase.auth.onAuthStateChange((_, session)=>{
-            set({
-                session,
-                user: session?.user,
-            })
-        })
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+          set({ session, user: session?.user });
 
-        return ()=>subscription.unsubscribe()
+          if (event === "SIGNED_IN") {
+            set({ providerToken: session?.provider_token ?? null });
+          }
+        });
+
+        return () => subscription.unsubscribe();
+      },
+    }),
+    {
+      name: "auth-store",
+      partialize: (state) => ({ providerToken: state.providerToken }),
     }
-}))
+  )
+);
