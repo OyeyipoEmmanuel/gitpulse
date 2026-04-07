@@ -2,6 +2,7 @@
 import PriceCard from "./components/PriceCard";
 
 export default function LandingPage() {
+  console.log(import.meta.env.VITE_APP_URL)
   return (
     <main className="max-w-sm md:max-w-7xl mx-auto text-white"> 
       <section className="pt-32">

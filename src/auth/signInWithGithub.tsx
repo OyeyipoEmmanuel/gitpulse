@@ -4,8 +4,8 @@ export const signInWithGithub = async()=>{
     const {error} = await supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
-            redirectTo: `${import.meta.env.VITE_APP_URL}/auth/callback",
-            scopes: "read:user user:email public_repo read:org`
+            redirectTo: `${import.meta.env.VITE_APP_URL}/auth/callback`,
+            scopes: "read:user user:email public_repo read:org"
         }
     })
 

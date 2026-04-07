@@ -29,7 +29,7 @@ export const useAuthStore = create<AuthState>()(
         });
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-          set({ session, user: session?.user });
+          set({ session, user: session?.user, loading: false });
 
           if (event === "SIGNED_IN") {
             set({ providerToken: session?.provider_token ?? null });

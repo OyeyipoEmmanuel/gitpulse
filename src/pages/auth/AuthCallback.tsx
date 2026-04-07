@@ -18,7 +18,7 @@ const AuthCallback = () => {
             // something went wrong, send them back to login
             navigate("/login", { replace: true })
         }
-    }, [user, loading])
+    }, [user, loading, navigate])
     return (
         <div className='w-screen h-screen bg-primaryBg'>
             <h1 className='text-4xl'>Redirection..</h1>
