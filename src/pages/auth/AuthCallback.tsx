@@ -8,15 +8,9 @@ const AuthCallback = () => {
     const navigate = useNavigate()
     const { user, loading } = useAuthStore()
 
-    //Navigates to /dashboard when component mounts
+    //Navigates to /select-account when component mounts
     useEffect(() => {
-        if (loading) {
-            <div className='w-screen h-screen bg-primaryBg'>
-                <LoadingSpinner className='text-green-500 w-32 h-32' />
-            </div>
-
-            return;
-        }; // wait until session is resolved
+        if (loading) return;
 
         if (user) {
             navigate(`/${user.user_metadata.user_name}/select-account`, { replace: true })
