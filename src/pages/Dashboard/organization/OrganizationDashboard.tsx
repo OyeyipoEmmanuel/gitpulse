@@ -1,8 +1,11 @@
+import OrgSidenav from "./components/OrgSidenav"
 
 
 const OrganizationDashboard = () => {
   return (
-    <div>OrganizationDashboard</div>
+    <main>
+      <OrgSidenav/>
+    </main>
   )
 }
 

@@ -31,7 +31,7 @@ const SelectRepoMenu = () => {
         <div className="">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <button className="bg-[#0D1117] px-3 py-2 w-full border border-[#292F36] rounded-lg cursor-pointer disabled:cursor-not-allowed disabled:opacity-50" disabled={isPending}>
+                    <button className="bg-[#0D1117] px-3 py-2 w-full border border-[#292F36] rounded-lg cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 outline-none" disabled={isPending}>
                         {error ? (
                             <p className="text-white text-center">Error</p>
                         ) : isPending ? (
@@ -43,7 +43,7 @@ const SelectRepoMenu = () => {
                                 )}
                                 <span className="flex flex-col text-start gap-y-2">
                                     <p className="text-white capitalize font-semibold ">{selected.name}</p>
-                                <p className="text-[#6F7681] text-start text-xs capitalize line-clamp-1">{selected.desc}</p>
+                                <p className="text-[#6F7681] text-start text-xs capitalize line-clamp-1">{selected.desc == "no desc" ? "" : selected.desc}</p>
                                 </span>
                                 
                             </div>
