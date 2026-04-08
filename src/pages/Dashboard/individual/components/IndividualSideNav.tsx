@@ -1,13 +1,13 @@
 import Logo from "@/components/ui/Logo"
 import { navContent } from "../datas"
-import { Link } from "react-router-dom"
+import { NavLink } from "react-router-dom"
 import { LogOut } from "lucide-react"
-import SelectRepoMenu from "./SelectRepoMenu"
+import SelectRepoMenu from "./SelectIndividualRepoMenu"
 
 
 const IndividualSideNav = () => {
   return (
-    <nav className="max-w-[256px] h-screen bg-[#161B22] flex flex-col justify-between z-50 border-r border-[#2D3239]">
+    <nav className="w-full h-screen bg-[#161B22] flex flex-col justify-between z-50 border-r border-[#2D3239]">
 
       <section className="w-full p-6 flex flex-col space-y-6">
         {/* Logo */}
@@ -17,19 +17,32 @@ const IndividualSideNav = () => {
 
         {/* Select Repo */}
         <div>
-          <SelectRepoMenu/>
+          <SelectRepoMenu />
         </div>
 
         {/* Nav Contents */}
         <ul className="flex flex-col space-y-5">
           {navContent.map((each, idx) => (
             <li key={idx}>
-              <Link to={each.path}>
-                <span className="flex items-center space-x-4 ">
-                  {each.icon}
-                  <p className="text-[#94A3B8] text-14px">{each.label}</p>
-                </span>
-              </Link>
+              <NavLink
+                to={each.path}
+                className={({ isActive }) =>
+                  `flex items-center space-x-4 pl-4 ${isActive ? "border-l-2 border-[#227B34] bg-[#20252C] py-2.5 rounded-sm font-semibold" : ""
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    {each.icon}
+                    <p
+                      className={`text-14px ${isActive ? "text-[#227B34]" : "text-[#94A3B8]"
+                        }`}
+                    >
+                      {each.label}
+                    </p>
+                  </>
+                )}
+              </NavLink>
             </li>
           ))}
         </ul>
