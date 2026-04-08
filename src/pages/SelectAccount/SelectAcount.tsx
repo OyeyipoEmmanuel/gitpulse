@@ -33,7 +33,7 @@ const SelectAcount = () => {
 
                     {/* For User */}
                     {data.user && (
-                        <div className="bg-[#161B22] border border-[#2A2F36] rounded-md p-3 flex flex-row justify-between items-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer" onClick={()=>navigate(`/dashboard/personal/${data.user.login}`)}>
+                        <div className="bg-[#161B22] border border-[#2A2F36] rounded-md p-3 flex flex-row justify-between items-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer" onClick={()=>navigate(`/dashboard/personal/${data.user.login}/profile`)}>
                             <div className="flex space-x-3 items-center md:space-x-6">
                                 {/* img */}
                                 <img src={data.user.avatar_url} alt={`${data.user.name}`} className="rounded-xl" width={48} height={48} loading="lazy"/>
