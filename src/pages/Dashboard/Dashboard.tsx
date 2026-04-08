@@ -8,7 +8,7 @@ const Dashboard = () => {
         console.log(user?.user_metadata)
     }
   return (
-    <main className="flex h-screen bg-[#0D1117]">
+    <main className="flex flex-col h-screen bg-[#0D1117]">
       {/* <Sidenav /> */}
       <section className="flex-1 overflow-y-auto">
         <Outlet /> 
