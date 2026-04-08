@@ -1,4 +1,4 @@
-import type { RouteObject } from "react-router-dom";
+import { Navigate, type RouteObject } from "react-router-dom";
 import LandingPage from "../pages/LandingPage/LandingPage";
 import LandingLayout, { ProtectedRoute } from "../components/layouts/Layouts";
 import AuthCallback from "../pages/auth/AuthCallback";
@@ -6,6 +6,7 @@ import Dashboard from "../pages/Dashboard/Dashboard";
 import SelectAcount from "../pages/SelectAccount/SelectAcount";
 import IndividualDashboard from "@/pages/Dashboard/individual/IndividualDashboard";
 import OrganizationDashboard from "@/pages/Dashboard/organization/OrganizationDashboard";
+import IndividualProfile from "@/pages/Dashboard/individual/pages/IndividualProfile";
 
 export const routes: RouteObject[] = [
     {
@@ -28,14 +29,22 @@ export const routes: RouteObject[] = [
 
             //Account Selection route
             { path: "/:user_name/select-account", element: <SelectAcount /> },
-            
+
             //Dashboard routes
             {
                 path: "/dashboard",
                 element: <Dashboard />,
                 children: [
                     {
-                        path: "personal/:username", element: <IndividualDashboard />
+                        path: "personal/:username",
+                        element: <IndividualDashboard />,
+                        children: [
+                            {
+                                index: true,
+                                element: <Navigate to="profile" replace />
+                            },
+                            { path: "profile", element: <IndividualProfile /> },
+                        ]
                     },
                     {
                         path: "org/:orgname", element: <OrganizationDashboard />
