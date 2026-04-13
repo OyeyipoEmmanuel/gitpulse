@@ -51,8 +51,8 @@ const SelectAcount = () => {
                     )}
 
                     {/* For Organizations */}
-                    {data.orgs && data.orgs.map((each: any) => (
-                        <div className="bg-[#161B22] border border-[#2A2F36] rounded-md p-3 flex flex-row justify-between items-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer" onClick={()=>navigate(`/dashboard/org/${each.login}`)}>
+                    {data.orgs && data.orgs.map((each: any, idx:number) => (
+                        <div key={idx} className="bg-[#161B22] border border-[#2A2F36] rounded-md p-3 flex flex-row justify-between items-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer" onClick={()=>navigate(`/dashboard/org/${each.login}`)}>
                             <div className="flex space-x-3 items-center md:space-x-6 w-[80%]">
                                 {/* img */}
                                 <img src={each.avatar_url} alt={`${each.name}`} className="rounded-xl" width={48} height={48} />
