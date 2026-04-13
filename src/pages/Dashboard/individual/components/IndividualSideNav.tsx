@@ -7,7 +7,7 @@ import SelectRepoMenu from "./SelectIndividualRepoMenu"
 
 const IndividualSideNav = () => {
   return (
-    <nav className="w-full h-screen bg-[#161B22] flex flex-col justify-between z-50 border-r border-[#2D3239]">
+    <nav className="hidden w-[256px] h-screen fixed bg-[#161B22] md:flex flex-col justify-between z-50 border-r border-[#2D3239]">
 
       <section className="w-full p-6 flex flex-col space-y-6">
         {/* Logo */}
