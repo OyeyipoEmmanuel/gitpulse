@@ -19,8 +19,8 @@ const IndividualProfile = () => {
   const user = data?.graphqlData.user
   const repos = data?.graphqlData?.user?.repositories
 
-  const starred = data?.starredRepos
-  const events = data?.recentEvents
+  // const starred = data?.starredRepos
+  // const events = data?.recentEvents
 
   //Calc Languages percentage
   const languageMap = repos?.nodes?.reduce((acc: Record<string, { count: number; color: string }>, repo: { primaryLanguage: { name: string; color: string } | null }) => {
