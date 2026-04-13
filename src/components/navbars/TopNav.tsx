@@ -1,12 +1,12 @@
 
 import { CircleUserRound } from "lucide-react"
 import { signInWithGithub } from "../../auth/signInWithGithub"
-import { useAuthStore } from "../../store/authStore"
+// import { useAuthStore } from "../../store/authStore"
 import Logo from "../ui/Logo";
 
 export default function TopNav() {
-    const {loading} = useAuthStore()
-    if(loading) return;
+    // const {loading} = useAuthStore()
+    // if(loading) return;
 
   return (
     <nav className='fixed w-full bg-[#0D1117] z-50 px-4 flex flex-row items-center justify-between border-b border-[#0F1C1A] py-4 '>
