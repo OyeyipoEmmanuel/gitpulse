@@ -7,9 +7,6 @@ export const useGetAccountsToDisplay = () => {
     const { loading, providerToken, getToken } = useAuthStore();
     const url = import.meta.env.VITE_GITHUB_API_URL
 
-
-
-
     return useQuery({
         queryKey: ['fetch_all_accounts'],
         enabled: !loading && !!providerToken,
