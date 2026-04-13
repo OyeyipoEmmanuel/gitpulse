@@ -28,6 +28,7 @@ export const useAuthStore = create<AuthState>()(
             user: session?.user ?? null,
             loading: false,
           });
+          
         });
 
         const {
