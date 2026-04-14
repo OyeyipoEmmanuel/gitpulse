@@ -13,9 +13,9 @@ const LanguageDistributionChart = ({ data }: {
         <XAxis
           dataKey="language"
           tick={{ fill: "#8b949e", fontSize: 11 }}
-          angle={-45}           // 👈 rotate labels
-          textAnchor="end"      // 👈 align rotated text
-          interval={0}          // 👈 show ALL labels, no skipping
+          angle={-45} 
+          textAnchor="end"      
+          interval={0}          
         />
         <YAxis tick={{ fill: "#8b949e", fontSize: 11 }} unit="%" />
         <Tooltip
