@@ -3,7 +3,13 @@ import { useFetchProfilePageDatas } from "@/services/individualDashboardCalls/fe
 import { Calendar1, MapPin } from "lucide-react"
 import { useParams } from "react-router-dom"
 import Card from "../components/Card"
-import { LanguageDistributionChart } from "@/components/charts"
+import { LanguageDistributionChart, PrStatusPieChart } from "@/components/charts"
+import { HiBars4 } from "react-icons/hi2";
+import { IoMdStarOutline } from "react-icons/io";
+import { MdForkRight } from "react-icons/md";
+import { RxCounterClockwiseClock } from "react-icons/rx";
+
+
 
 
 const IndividualProfile = () => {
@@ -14,15 +20,19 @@ const IndividualProfile = () => {
   if (error) return;
 
   if (isPending) return (<LoadingSpinner className="text-green-500 w-32 h-32" />)
-  console.log(data)
 
-  const user = data?.graphqlData.user
+  const user = data?.graphqlData?.user
   const repos = data?.graphqlData?.user?.repositories
+  const pinnedRepos = data?.graphqlData?.user?.pinnedItems?.nodes
 
-  // const starred = data?.starredRepos
-  // const events = data?.recentEvents
 
-  //Calc Languages percentage
+
+  const starred = data?.starredRepos
+  
+  const recentEvents = data?.recentEvents
+  console.log(recentEvents)
+
+  //Calc Languages percentage start
   const languageMap = repos?.nodes?.reduce((acc: Record<string, { count: number; color: string }>, repo: { primaryLanguage: { name: string; color: string } | null }) => {
     const lang = repo.primaryLanguage
     if (lang) {
@@ -34,7 +44,6 @@ const IndividualProfile = () => {
     return acc
   }, {} as Record<string, { count: number; color: string }>)
 
-  
   const languages = Object.entries(languageMap ?? {}).map(([language, value]) => {
     const { count, color } = value as { count: number; color: string }
     return {
@@ -44,8 +53,24 @@ const IndividualProfile = () => {
       percentage: Math.round((count / (repos?.nodes?.length ?? 1)) * 100)
     }
   })
+  //Calc Languages percentage end
 
-  console.log(languages)
+  //Calc pr status percentage start
+  const prTotals = repos?.nodes?.reduce(
+    (acc: { open: number; closed: number; merged: number }, repo: { openPRs: { totalCount: number }; closedPRs: { totalCount: number }; mergedPRs: { totalCount: number } }) => ({
+      open: acc.open + (repo.openPRs?.totalCount ?? 0),
+      closed: acc.closed + (repo.closedPRs?.totalCount ?? 0),
+      merged: acc.merged + (repo.mergedPRs?.totalCount ?? 0),
+    }),
+    { open: 0, closed: 0, merged: 0 }
+  )
+
+  const prStatusData = [
+    { name: "Open", value: prTotals?.open ?? 0, fill: "#3B82F6" },
+    { name: "Closed", value: prTotals?.closed ?? 0, fill: "#EF4444" },
+    { name: "Merged", value: prTotals?.merged ?? 0, fill: "#22C55E" },
+  ]
+  //Calc pr status percentage end
 
   return (
     <main className="flex flex-col py-5 px-4 md:px-0">
@@ -109,28 +134,104 @@ const IndividualProfile = () => {
 
         </div>
 
-        <div>
+        <div className="flex flex-col md:flex-row gap-6 md:justify-between">
           {/* lang distribution */}
           <Card className="p-5 md:w-[50%]">
             <div className="flex flex-col space-y-4">
-              <p className="text-white font-semibold tracking-wider text-center">TOP LANGUAGES</p>
-              <LanguageDistributionChart data={languages}/>
+              <p className="text-graySubtextColor font-semibold tracking-wider text-center">TOP LANGUAGES</p>
+              <LanguageDistributionChart data={languages} />
             </div>
           </Card>
+
           {/* pr status */}
+          <Card className="p-5 md:w-[50%]">
+            <div>
+              <div className="flex flex-col space-y-4">
+                <p className="text-graySubtextColor font-semibold tracking-wider text-center">PULL REQUEST STATUS</p>
+                <PrStatusPieChart data={prStatusData} />
+              </div>
+            </div>
+          </Card>
         </div>
 
       </section>
 
       {/* Bottom */}
-      <section>
-        <div>
+      <section className="pt-5 flex flex-col gap-5">
+        <div className="flex flex-col md:flex-row gap-5 md:justify-between">
           {/* Pinned */}
+          <span className="md:w-[50%] w-full">
+            <aside className="flex gap-1 items-center pb-3">
+              <HiBars4 className="text-secondaryTextColor text-xl" />
+              <h1 className="text-white font-semibold tracking-wider text-center text-lg">Pinned Repositories</h1>
+            </aside>
+
+            <aside className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {pinnedRepos && pinnedRepos.map((repo: any, idx: number) => (
+                <Card key={idx} className="p-5 flex flex-col gap-3">
+                  <span className="flex justify-between items-center">
+                    <h2 className="text-lg font-semibold text-white capitalize">{repo.name}</h2>
+                    <aside className="px-3 py-0.5 text-[10px] rounded-full bg-[#21262D] text-graySubtextColor border border-[#2E343B]">{repo.isPrivate ? "Private" : "Public"}</aside>
+                  </span>
+
+                  <p className="line-clamp-2 text-graySubtextColor capitalize text-sm">{repo.description}</p>
+
+                  <span className="flex gap-5 items-center text-graySubtextColor text-xs">
+
+                    <aside className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: repo.primaryLanguage?.color }}></div>
+                      <p >{repo.primaryLanguage.name}</p>
+                    </aside>
+
+                    <aside className="flex items-center gap-1">
+                      <IoMdStarOutline />
+                      <p>{repo.stargazerCount}</p>
+                    </aside>
+
+                    <aside className="flex items-center gap-1">
+                      <MdForkRight />
+                      <p>{repo.forkCount}</p>
+                    </aside>
+                  </span>
+                </Card>
+              ))}
+            </aside>
+          </span>
+
           {/* Starred */}
+          <span className="md:w-[50%] w-full">
+            <aside className="flex gap-1 items-center pb-3">
+              <IoMdStarOutline className="text-secondaryTextColor text-xl" />
+              <h1 className="text-white font-semibold tracking-wider text-center text-lg">Recently Starred</h1>
+            </aside>
+
+            <aside className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {starred.map((each: any, idx: number) => (
+                <Card className="p-3 flex items-center space-x-3" key={idx}>
+                  <img src={each?.owner?.avatar_url} alt={each?.owner?.name} className="rounded-sm border border-[#2E343B]" width={40} height={40} />
+                  <div className="flex flex-col">
+                    <p className="font-semibold text-white capitalize">{each.name}</p>
+                    <p className="line-clamp-2 text-sm text-graySubtextColor">{each.description}</p>
+                  </div>
+                </Card>
+              ))}
+            </aside>
+          </span>
         </div>
-        <div>
-          {/* Recent activity */}
-        </div>
+
+
+        {/* Recent activity */}
+        <span className="md:w-[70%] w-full">
+          <aside className="flex gap-1 items-center pb-3">
+            <RxCounterClockwiseClock className="text-secondaryTextColor text-xl" />
+            <h1 className="text-white font-semibold tracking-wider text-center text-lg">Recent Activities</h1>
+          </aside>
+
+          <Card className="">
+            <div></div>
+          </Card>
+
+        </span>
       </section>
 
     </main>
