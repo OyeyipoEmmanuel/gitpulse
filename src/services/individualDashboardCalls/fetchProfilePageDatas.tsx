@@ -17,7 +17,7 @@ const PROFILE_OVERVIEW_QUERY = `
       followers { totalCount }
       following { totalCount }
 
-      pinnedItems(first: 2, types: REPOSITORY) {
+      pinnedItems(first: 4, types: REPOSITORY) {
         nodes {
           ... on Repository {
             name
