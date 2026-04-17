@@ -2,32 +2,32 @@ import Logo from "@/components/ui/Logo"
 import { navContent } from "../datas"
 import { NavLink } from "react-router-dom"
 import { LogOut } from "lucide-react"
-import SelectRepoMenu from "./SelectIndividualRepoMenu"
+// import SelectRepoMenu from "./SelectIndividualRepoMenu"
 
 
 const IndividualSideNav = () => {
   return (
     <nav className="hidden w-[256px] h-screen fixed bg-[#161B22] md:flex flex-col justify-between z-50 border-r border-[#2D3239]">
 
-      <section className="w-full p-6 flex flex-col space-y-6">
+      <section className="w-full flex flex-col">
         {/* Logo */}
-        <div>
+        <div className="px-6 flex items-center justify-center py-3.5">
           <Logo textSize={22} />
         </div>
 
         {/* Select Repo */}
-        <div>
+        {/* <div>
           <SelectRepoMenu />
-        </div>
+        </div> */}
 
         {/* Nav Contents */}
-        <ul className="flex flex-col space-y-5">
+        <ul className="flex flex-col space-y-5 md:space-y-8 p-6 border-t border-[#23282E]">
           {navContent.map((each, idx) => (
             <li key={idx}>
               <NavLink
                 to={each.path}
                 className={({ isActive }) =>
-                  `flex items-center space-x-4 pl-4 ${isActive ? "border-l-2 border-[#227B34] bg-[#20252C] py-2.5 rounded-sm font-semibold" : ""
+                  `flex items-center space-x-4 ${isActive ? "pl-4 border-l-2 border-[#227B34] bg-[#20252C] py-2.5 rounded-sm font-semibold" : ""
                   }`
                 }
               >
