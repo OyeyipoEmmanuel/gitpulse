@@ -4,38 +4,38 @@ import { ChartNoAxesColumn, ChartNoAxesCombined, FolderGit, GitBranch, Info, Use
 export const navContent: DashboardNavCOntentType[] = [
     {
       label: "Profile",
-      path:"/profile",
+      path:"profile",
       icon: <UserRound size={20} color="#94A3B8" strokeWidth={1} />
     },
     {
       label: "Contributions",
-      path:"/contributions",
+      path:"contributions",
       icon: <ChartNoAxesColumn size={20} color="#94A3B8" strokeWidth={1.5} />
     },
     {
       label: "Teams",
-      path:"/teams",
+      path:"teams",
       icon: <Users size={20} color="#94A3B8" strokeWidth={1.5} />
     },
 
     {
       label: "Repos",
-      path:"/repos",
+      path:"repos",
       icon: <FolderGit size={20} color="#94A3B8" strokeWidth={1} />
     },
     {
       label: "PRs",
-      path:"/prs",
+      path:"prs",
       icon: <GitBranch size={20} color="#94A3B8" strokeWidth={1} />
     },
     {
       label: "Issues",
-      path:"/issues",
+      path:"issues",
       icon: <Info size={20} color="#94A3B8" strokeWidth={1} />
     },
     {
       label: "Activity",
-      path:"/activity",
+      path:"activity",
       icon: <ChartNoAxesCombined size={20} color="#94A3B8" strokeWidth={1} />
     },
   ]
