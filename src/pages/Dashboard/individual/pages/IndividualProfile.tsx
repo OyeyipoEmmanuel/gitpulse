@@ -8,6 +8,8 @@ import { HiBars4 } from "react-icons/hi2";
 import { IoMdStarOutline } from "react-icons/io";
 import { MdForkRight } from "react-icons/md";
 import { RxCounterClockwiseClock } from "react-icons/rx";
+import { VscGitCommit, VscGitMerge, VscGitPullRequest, VscRepo, VscIssues, VscComment } from "react-icons/vsc";
+import { BiGitBranch } from "react-icons/bi";
 
 
 
@@ -71,6 +73,55 @@ const IndividualProfile = () => {
     { name: "Merged", value: prTotals?.merged ?? 0, fill: "#22C55E" },
   ]
   //Calc pr status percentage end
+
+  // Recent activity helpers
+  const timeAgo = (dateStr: string) => {
+    const diff = Date.now() - new Date(dateStr).getTime()
+    const mins = Math.floor(diff / 60000)
+    if (mins < 1) return "just now"
+    if (mins < 60) return `${mins}m ago`
+    const hrs = Math.floor(mins / 60)
+    if (hrs < 24) return `${hrs}h ago`
+    const days = Math.floor(hrs / 24)
+    if (days === 1) return "Yesterday"
+    if (days < 7) return `${days}d ago`
+    return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+  }
+
+  const getEventInfo = (event: any) => {
+    const repo = event.repo?.name
+    const p = event.payload
+    switch (event.type) {
+      case "PushEvent": {
+        const branch = p.ref?.replace("refs/heads/", "")
+        const msg = p.commits?.[0]?.message?.split("\n")[0]
+        return { icon: <VscGitCommit />, color: "#3B82F6", label: `Pushed to ${repo}`, sub: branch ? `on ${branch}` : null, message: msg ?? null }
+      }
+      case "PullRequestEvent": {
+        const merged = p.pull_request?.merged
+        const action = merged ? "Merged" : p.action === "opened" ? "Opened" : "Closed"
+        const Icon = merged ? VscGitMerge : VscGitPullRequest
+        const color = merged ? "#22C55E" : p.action === "opened" ? "#3B82F6" : "#EF4444"
+        return { icon: <Icon />, color, label: `${action} PR in ${repo}`, sub: null, message: p.pull_request?.title ?? null }
+      }
+      case "CreateEvent": {
+        const isRepo = p.ref_type === "repository"
+        return { icon: isRepo ? <VscRepo /> : <BiGitBranch />, color: "#A855F7", label: `Created ${p.ref_type} ${isRepo ? repo : p.ref}`, sub: isRepo ? null : `in ${repo}`, message: null }
+      }
+      case "ForkEvent":
+        return { icon: <MdForkRight />, color: "#F97316", label: `Forked ${repo}`, sub: `→ ${p.forkee?.full_name}`, message: null }
+      case "WatchEvent":
+        return { icon: <IoMdStarOutline />, color: "#EAB308", label: `Starred ${repo}`, sub: null, message: null }
+      case "IssuesEvent":
+        return { icon: <VscIssues />, color: p.action === "opened" ? "#3B82F6" : "#8B949E", label: `${p.action === "opened" ? "Opened" : "Closed"} issue in ${repo}`, sub: null, message: p.issue?.title ?? null }
+      case "IssueCommentEvent":
+        return { icon: <VscComment />, color: "#8B949E", label: `Commented on issue in ${repo}`, sub: null, message: p.comment?.body?.split("\n")[0] ?? null }
+      case "DeleteEvent":
+        return { icon: <BiGitBranch />, color: "#EF4444", label: `Deleted ${p.ref_type} ${p.ref}`, sub: `in ${repo}`, message: null }
+      default:
+        return { icon: <RxCounterClockwiseClock />, color: "#8B949E", label: event.type?.replace("Event", "") ?? "Activity", sub: repo, message: null }
+    }
+  }
 
   return (
     <main className="flex flex-col py-5 px-4 md:px-0">
@@ -136,7 +187,7 @@ const IndividualProfile = () => {
 
         <div className="flex flex-col md:flex-row gap-6 md:justify-between">
           {/* lang distribution */}
-          <Card className="p-5 md:w-[50%]">
+          <Card className="p-5 md:w-[67%]">
             <div className="flex flex-col space-y-4">
               <p className="text-graySubtextColor font-semibold tracking-wider text-center">TOP LANGUAGES</p>
               <LanguageDistributionChart data={languages} />
@@ -144,7 +195,7 @@ const IndividualProfile = () => {
           </Card>
 
           {/* pr status */}
-          <Card className="p-5 md:w-[50%]">
+          <Card className="p-5 md:w-[33%]">
             <div>
               <div className="flex flex-col space-y-4">
                 <p className="text-graySubtextColor font-semibold tracking-wider text-center">PULL REQUEST STATUS</p>
@@ -227,8 +278,34 @@ const IndividualProfile = () => {
             <h1 className="text-white font-semibold tracking-wider text-center text-lg">Recent Activities</h1>
           </aside>
 
-          <Card className="">
-            <div></div>
+          <Card className="divide-y divide-[#23282E]">
+            {recentEvents?.length > 0 ? recentEvents.map((event: any) => {
+              const { icon, color, label, sub, message } = getEventInfo(event)
+              return (
+                <div key={event.id} className="flex items-start gap-3 p-4">
+                  {/* icon */}
+                  <span className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-base" style={{ backgroundColor: `${color}22`, color }}>
+                    {icon}
+                  </span>
+
+                  {/* content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-white text-sm font-medium truncate">
+                        {label}
+                        {sub && <span className="text-graySubtextColor font-normal ml-1">{sub}</span>}
+                      </p>
+                      <span className="text-xs text-graySubtextColor flex-shrink-0">{timeAgo(event.created_at)}</span>
+                    </div>
+                    {message && (
+                      <p className="text-graySubtextColor text-xs mt-0.5 truncate">"{message}"</p>
+                    )}
+                  </div>
+                </div>
+              )
+            }) : (
+              <p className="text-graySubtextColor text-sm text-center py-8">No recent activity</p>
+            )}
           </Card>
 
         </span>
