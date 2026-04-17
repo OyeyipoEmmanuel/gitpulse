@@ -1,7 +1,7 @@
 
 import DashboardTopNav from '@/components/navbars/DashboardTopNav'
 import IndividualSideNav from './components/IndividualSideNav'
-import IndividualProfile from './pages/IndividualProfile'
+import { Outlet } from 'react-router-dom'
 
 const IndividualDashboard = () => {
   return (
@@ -15,7 +15,7 @@ const IndividualDashboard = () => {
 
         {/* Pages */}
         <div className='md:px-4'>
-          <IndividualProfile />
+          <Outlet />
         </div>
 
       </section>
