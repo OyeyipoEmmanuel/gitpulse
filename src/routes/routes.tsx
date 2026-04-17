@@ -7,6 +7,8 @@ import SelectAcount from "../pages/SelectAccount/SelectAcount";
 import IndividualDashboard from "@/pages/Dashboard/individual/IndividualDashboard";
 import OrganizationDashboard from "@/pages/Dashboard/organization/OrganizationDashboard";
 import IndividualProfile from "@/pages/Dashboard/individual/pages/IndividualProfile";
+import OrgProfile from "@/pages/Dashboard/organization/pages/OrgProfile";
+import IndividualRepoIntelligence from "@/pages/Dashboard/individual/pages/IndividualRepoIntelligence";
 
 export const routes: RouteObject[] = [
     {
@@ -44,14 +46,25 @@ export const routes: RouteObject[] = [
                                 element: <Navigate to="profile" replace />
                             },
                             { path: "profile", element: <IndividualProfile /> },
+                            { path: "repo-intelligence", element: <IndividualRepoIntelligence /> },
+                            { path: "productivity", element: <div /> },
+                            { path: "collaborations", element: <div /> },
+                            { path: "impact-summary", element: <div /> },
+                            { path: "career-snapshot", element: <div /> },
                         ]
                     },
                     {
-                        path: "org/:orgname", element: <OrganizationDashboard />
+                        path: "org/:orgname", element: <OrganizationDashboard />,
+                        children: [
+                            {
+                                index: true,
+                                element: <Navigate to="profile" replace />
+                            },
+                            { path: "profile", element: <OrgProfile /> }
+                        ]
                     },
                 ]
-            }
-
+            },
         ]
     }
 ]
