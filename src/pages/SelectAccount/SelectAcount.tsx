@@ -1,5 +1,6 @@
 // import TopNav from "../../components/navbars/TopNav"
 import { LoadingSpinner } from "@/components/ui/spinner"
+import ErrorToast from "@/components/ui/error-toast"
 import { useGetAccountsToDisplay } from "../../services/fetchAllAccount"
 import { useNavigate } from "react-router-dom"
 
@@ -12,11 +13,7 @@ const SelectAcount = () => {
 
     if (isPending) return <LoadingSpinner className="text-green-500 w-32 h-32" />
 
-    if (error) return (
-        <div className="text-red-500 text-center pt-32">
-            Something went wrong. Please try again.
-        </div>
-    )
+    if (error) return <ErrorToast message={error.message} />
 
     return (
         <main className="bg-primaryBg w-full">
