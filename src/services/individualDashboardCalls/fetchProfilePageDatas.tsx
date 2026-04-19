@@ -2,7 +2,6 @@ import { fetchGraphQL } from "@/lib/github"
 import { useAuthStore } from "@/store/authStore"
 import { useQuery } from "@tanstack/react-query"
 
-
 const PROFILE_OVERVIEW_QUERY = `
   query($username: String!) {
     user(login: $username) {
@@ -55,7 +54,6 @@ export const useFetchProfilePageDatas = (username: string | null) => {
         enabled: !loading && !!username,
         queryFn: async () => {
             const token = await getToken()
-
             if (!token) throw new Error("No auth token available")
 
             const [graphqlData, starredRepos, recentEvents] = await Promise.all([
