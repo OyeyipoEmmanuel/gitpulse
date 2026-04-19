@@ -59,17 +59,16 @@ export const useFetchRepoIntelligenceDatas = (username: string | null) => {
         enabled: !loading && !!username,
         queryFn: async () => {
             const token = await getToken()
+            console.log(username)
             if (!token) throw new Error("No auth token available")
 
             // step 1: fetch overview
             const overview = await fetchGraphQL(OVERVIEW_QUERY, {
                 username,
                 since: since.toISOString()
-            }, token)
-            console.log(overview)
+            }, token)            
 
             const repos = overview?.user?.repositories?.nodes?.map((n:any) => n.name)
-            console.log(repos)
 
             // fetch stars for repos
             const starResults = await Promise.all(
@@ -77,7 +76,6 @@ export const useFetchRepoIntelligenceDatas = (username: string | null) => {
                     fetchGraphQL(STAR_GROWTH_QUERY, { owner: username, repo }, token)
                 )
             )
-            console.log(starResults)
 
             let allStarDates = starResults.flatMap(r =>
                 r?.repository?.stargazers?.edges?.map((e:any) => e.starredAt)
@@ -87,7 +85,6 @@ export const useFetchRepoIntelligenceDatas = (username: string | null) => {
             allStarDates = [...allStarDates.filter((date)=>(
                 date != undefined
             ))]
-            console.log(allStarDates)
 
             return { overview, starResults, allStarDates }
         }
