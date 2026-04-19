@@ -1,4 +1,5 @@
 
+
 export const fetchGraphQL = async (query: string, variables: object, token: string) => {
   const res = await fetch("https://api.github.com/graphql", {
     method: "POST",
