@@ -1,36 +1,7 @@
 import { useAuthStore } from "@/store/authStore"
 import { useQuery } from "@tanstack/react-query"
 
-const GRAPHQL_DATAS = `
-query($org: String!) {
-    organization(login: $org) {
-        name
-        login
-        description
-        websiteUrl
-        location
-        avatarUrl
-        membersWithRole { totalCount }
 
-        repositories(first: 100) {
-            totalCount
-            nodes {
-                stargazerCount
-                forkCount
-                primaryLanguage { name color }
-
-        issues(states: OPEN) { totalCount }
-        pullRequests(states: OPEN) { totalCount }
-        defaultBranchRef {
-            target {
-                ... on Commit { history { totalCount } }
-            }
-        }
-        }
-        }
-    }
-}
-`
 
 
 export const useFetchOrgProfilePageData = (orgname: string) => {
