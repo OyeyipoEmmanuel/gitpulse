@@ -1,4 +1,5 @@
 import { LoadingSpinner } from "@/components/ui/spinner"
+import ErrorToast from "@/components/ui/error-toast"
 import { useFetchProfilePageDatas } from "@/services/individualDashboardCalls/fetchProfilePageDatas"
 import { Calendar1, MapPin } from "lucide-react"
 import { useParams } from "react-router-dom"
@@ -19,9 +20,12 @@ const IndividualProfile = () => {
 
   const { data, isPending, error } = useFetchProfilePageDatas(param.username ?? null)
 
-  if (error) return;
+  if (error) return <ErrorToast message={error.message} />
+
 
   if (isPending) return (<LoadingSpinner className="text-green-500 w-32 h-32" />)
+
+    console.log(data)
 
   const user = data?.graphqlData?.user
   const repos = data?.graphqlData?.user?.repositories
