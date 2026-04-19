@@ -42,9 +42,6 @@ const IndividualRepoIntelligence = () => {
 
   const overview = data?.overview?.user?.repositories
 
-  // !isPending && console.log(error)
-  // !isPending && !error && console.log(data)
-
   //get total repo count
   const totalRepoCount = overview?.totalCount
 
@@ -71,28 +68,25 @@ const IndividualRepoIntelligence = () => {
 
   const mostUsedLang = getMostUsedLang(arr)
 
-  // console.log(mostUsedLang)
-
-  // console.log(totalRepoCount, totalStars, totalFork)
   return (
-    <main className="py-4">
-      <Card className="flex items-center justify-between w-full">
-        <div className="flex w-full p-5 flex-col border-r border-[#2A2F36] space-y-2">
+    <main className="py-4 px-4 md:px-0">
+      <Card className="flex flex-col md:flex-row items-center justify-between w-full">
+        <div className="flex w-full p-5 flex-col border-b md:border-r border-[#2A2F36] space-y-2">
           <p className="text-graySubtextColor font-semibold tracking-tighter text-sm uppercase">Total Repos</p>
           <p className="text-4xl text-white numbersFont font-extrabold">{totalRepoCount}</p>
         </div>
 
-        <div className="flex w-full p-5 flex-col border-r border-[#2A2F36] space-y-2">
+        <div className="flex w-full p-5 flex-col border-b md:border-r border-[#2A2F36] space-y-2">
           <p className="text-graySubtextColor font-semibold tracking-tighter text-sm uppercase">Total stars</p>
           <p className="text-4xl text-white numbersFont font-extrabold">{totalStars}</p>
         </div>
 
-        <div className="flex w-full p-5 flex-col border-r border-[#2A2F36] space-y-2">
+        <div className="flex w-full p-5 flex-col border-b md:border-r border-[#2A2F36] space-y-2">
           <p className="text-graySubtextColor font-semibold tracking-tighter text-sm uppercase">Total forks</p>
           <p className="text-4xl text-white numbersFont font-extrabold">{totalFork}</p>
         </div>
 
-        <div className="flex w-full p-5 flex-col border-r border-[#2A2F36] space-y-2">
+        <div className="flex w-full p-5 flex-col border-b md:border-r border-[#2A2F36] space-y-2">
           <p className="text-graySubtextColor font-semibold tracking-tighter text-sm uppercase">most used language</p>
           <p className="text-3xl text-white font-semibold">{mostUsedLang}</p>
         </div>
