@@ -3,6 +3,9 @@ import ErrorToast from "@/components/ui/error-toast"
 import { useFetchRepoIntelligenceDatas } from "@/services/individualDashboardCalls/fetchRepoIntelligenceData"
 import { useParams } from "react-router-dom"
 import Card from "../components/Card"
+import BarsForMostActiveRepos from "../components/BarsForMostActiveRepos"
+import DeadReposCard from "../components/DeadReposCard"
+import StarsGrowthAreaChart from "@/components/charts/StarsGrowthAreaChart"
 
 
 
@@ -32,7 +35,6 @@ function getMostUsedLang(arrOfLanguages: string[]) {
 }
 
 const IndividualRepoIntelligence = () => {
-
   const params = useParams()
 
   const { data, isPending, error } = useFetchRepoIntelligenceDatas(params.username ?? null)
@@ -55,7 +57,7 @@ const IndividualRepoIntelligence = () => {
     acc + (r.forkCount ?? 0), 0
   )
 
-  console.log(overview?.nodes[0]?.primaryLanguage.name)
+  console.log(data)
 
   // get most used Language
   const arr: string[] = []
@@ -64,46 +66,86 @@ const IndividualRepoIntelligence = () => {
     if (node?.primaryLanguage?.name) {
       arr.push(node.primaryLanguage.name)
     }
-  })
 
+
+  })
   const mostUsedLang = getMostUsedLang(arr)
 
+  //get most active repos
+
+  //Get 30days before now
+  const date = new Date()
+  date.setDate(date.getDate() - 30)
+  const thirtyDaysAgo = date.toISOString()
+  console.log(thirtyDaysAgo)
+
+  //filter array with last 30days updated fiel
+  const activeRepos = overview?.nodes
+    ?.filter((node: any) => thirtyDaysAgo <= node.updatedAt)
+    ?.map((node: any) => ({ name: node.name, totalCount: node.defaultBranchRef?.target?.history?.totalCount }))
+
+
+  // Get Dead repos
+  //Get 6months(30*6=180) before now
+  date.setDate(date.getDate() - 180)
+  const sixMonthBefore = date.toISOString()
+
+  const deadRepos = overview?.nodes
+    ?.filter((node: any) => sixMonthBefore >= node.updatedAt)
+    ?.map((node: any) => ({ name: node.name, updatedAt: node.updatedAt, diskUsage: node.diskUsage ?? 0 }))
+
+
   return (
-    <main className="py-4 px-4 md:px-0">
+    <main className="py-4 px-4 md:px-0 flex flex-col gap-6">
+      {/* Stats */}
       <Card className="flex flex-col md:flex-row items-center justify-between w-full">
-        <div className="flex w-full p-5 flex-col border-b md:border-r border-[#2A2F36] space-y-2">
+        <div className="flex w-full p-5 flex-col border-b md:border-b-0 md:border-r border-[#2A2F36] space-y-2">
           <p className="text-graySubtextColor font-semibold tracking-tighter text-sm uppercase">Total Repos</p>
           <p className="text-4xl text-white numbersFont font-extrabold">{totalRepoCount}</p>
         </div>
 
-        <div className="flex w-full p-5 flex-col border-b md:border-r border-[#2A2F36] space-y-2">
+        <div className="flex w-full p-5 flex-col border-b md:border-b-0 md:border-r border-[#2A2F36] space-y-2">
           <p className="text-graySubtextColor font-semibold tracking-tighter text-sm uppercase">Total stars</p>
           <p className="text-4xl text-white numbersFont font-extrabold">{totalStars}</p>
         </div>
 
-        <div className="flex w-full p-5 flex-col border-b md:border-r border-[#2A2F36] space-y-2">
+        <div className="flex w-full p-5 flex-col border-b md:border-b-0 md:border-r border-[#2A2F36] space-y-2">
           <p className="text-graySubtextColor font-semibold tracking-tighter text-sm uppercase">Total forks</p>
           <p className="text-4xl text-white numbersFont font-extrabold">{totalFork}</p>
         </div>
 
-        <div className="flex w-full p-5 flex-col border-b md:border-r border-[#2A2F36] space-y-2">
+        <div className="flex w-full p-5 flex-col border-b md:border-b-0 md:border-r border-[#2A2F36] space-y-2">
           <p className="text-graySubtextColor font-semibold tracking-tighter text-sm uppercase">most used language</p>
           <p className="text-3xl text-white font-semibold">{mostUsedLang}</p>
         </div>
 
       </Card>
 
-
-      <section>
+      <section className="flex flex-col md:flex-row gap-5">
         {/* Most Active repos */}
-        <div></div>
+        <Card className="w-full md:w-[60%] p-5" >
+          <div>
+            <h1 className="text-white font-semibold text-lg">Most Active Repos</h1>
+            <p className="text-graySubtextColor text-xs pt-1">Commits in last 30days</p>
+          </div>
+
+          <BarsForMostActiveRepos recentRepos={activeRepos} />
+        </Card>
 
         {/* Dead repos */}
-        <div></div>
+        <DeadReposCard deadRepos={deadRepos} />
       </section>
 
       <section>
-        <div></div>
+        {/* Stars Growth */}
+         <Card className="w-full p-5" >
+          <div>
+            <h1 className="text-white font-semibold text-lg">Star Velocity</h1>
+            <p className="text-graySubtextColor text-xs pt-1">How fast your repos are being discovered</p>
+          </div>
+
+          <StarsGrowthAreaChart data={data?.starsByDay}/>
+        </Card>
         <div></div>
       </section>
 
