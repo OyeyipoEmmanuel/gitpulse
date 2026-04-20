@@ -62,7 +62,7 @@ export const useFetchRepoIntelligenceDatas = (username: string | null) => {
             console.log(username)
             if (!token) throw new Error("No auth token available")
 
-            // step 1: fetch overview
+            //fetch overview
             const overview = await fetchGraphQL(OVERVIEW_QUERY, {
                 username,
                 since: since.toISOString()
@@ -77,16 +77,18 @@ export const useFetchRepoIntelligenceDatas = (username: string | null) => {
                 )
             )
 
-            let allStarDates = starResults.flatMap(r =>
-                r?.repository?.stargazers?.edges?.map((e:any) => e.starredAt)
-            )
+            const allStarDates = starResults
+                .flatMap(r => r?.repository?.stargazers?.edges?.map((e: any) => e.starredAt))
+                .filter((date: any) => date != undefined)
+                .reduce((acc: Record<string, number>, date: string) => {
+                    const day = date.slice(0, 10)
+                    acc[day] = (acc[day] ?? 0) + 1
+                    return acc
+                }, {} as Record<string, number>)
 
-            //Filter out undefined
-            allStarDates = [...allStarDates.filter((date)=>(
-                date != undefined
-            ))]
+            const starsByDay = Object.entries(allStarDates).map(([date, stars]) => ({ date, stars })).sort((a, b) => a.date.localeCompare(b.date))
 
-            return { overview, starResults, allStarDates }
+            return { overview, starsByDay }
         }
     })
 }
