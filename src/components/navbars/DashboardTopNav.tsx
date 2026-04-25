@@ -16,7 +16,7 @@ const DashboardTopNav = ({ onMenuToggle }: DashboardTopNavProps) => {
   }, [location.pathname]);
 
   return (
-    <div className="sticky top-0 z-30 bg-[#11151C] border-b border-[#191D24] p-4 flex items-center gap-3">
+    <div className="sticky top-0 z-50 bg-[#11151C] border-b border-[#191D24] p-4 flex items-center gap-3">
       {onMenuToggle && (
         <button
           onClick={onMenuToggle}
