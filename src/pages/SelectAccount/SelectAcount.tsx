@@ -3,6 +3,7 @@ import { LoadingSpinner } from "@/components/ui/spinner"
 import ErrorToast from "@/components/ui/error-toast"
 import { useGetAccountsToDisplay } from "../../services/fetchAllAccount"
 import { useNavigate } from "react-router-dom"
+import type { GithubOrg } from "@/types"
 
 
 const SelectAcount = () => {
@@ -11,14 +12,18 @@ const SelectAcount = () => {
     //Fetch accounts
     const { isPending, error, data } = useGetAccountsToDisplay()
 
-    if (isPending) return <LoadingSpinner className="text-green-500 w-32 h-32" />
+    if (isPending) return (
+        <div className="w-screen h-screen bg-primaryBg">
+            <LoadingSpinner className="text-green-500 w-32 h-32" />
+        </div>
+    )
 
     if (error) return <ErrorToast message={error.message} />
 
     return (
         <main className="bg-primaryBg w-full">
             {/* <TopNav /> */}
-            <section className="pt-32 min-h-screen max-w-xs mx-auto md:max-w-3xl flex flex-col items-center justify-center text-white">
+            <section className="pt-32 min-h-screen max-w-sm px-4 mx-auto md:max-w-3xl flex flex-col items-center justify-center text-white">
                 <div className="flex flex-col pb-12 space-y-1 text-center justify-center items-center">
                     <img src="/images/logo.svg" alt="GitPulse Logo" width={40} height={40} className="animate-pulse" loading="lazy"/>
 
@@ -48,7 +53,7 @@ const SelectAcount = () => {
                     )}
 
                     {/* For Organizations */}
-                    {data.orgs && data.orgs.map((each: any, idx:number) => (
+                    {data.orgs && data.orgs.map((each: GithubOrg, idx:number) => (
                         <div key={idx} className="bg-[#161B22] border border-[#2A2F36] rounded-md p-3 flex flex-row justify-between items-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer" onClick={()=>navigate(`/dashboard/org/${each.login}`)}>
                             <div className="flex space-x-3 items-center md:space-x-6 w-[80%]">
                                 {/* img */}
