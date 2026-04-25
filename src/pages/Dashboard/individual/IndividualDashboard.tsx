@@ -18,7 +18,7 @@ const IndividualDashboard = () => {
       />
 
       <section className='md:w-[calc(100%-256px)] w-full'>
-        <DashboardTopNav onMenuToggle={() => setMobileNavOpen(true)} />
+        <DashboardTopNav onMenuToggle={() => setMobileNavOpen(prev => !prev)} />
 
         {/* Pages */}
         <div className='md:px-4'>
