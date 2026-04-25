@@ -1,6 +1,7 @@
 import { LoadingSpinner } from "@/components/ui/spinner"
 import ErrorToast from "@/components/ui/error-toast"
 import { useFetchProfilePageDatas } from "@/services/individualDashboardCalls/fetchProfilePageDatas"
+import type { GithubEvent, PinnedRepo, StarredRepo } from "@/types"
 import { Calendar1, MapPin } from "lucide-react"
 import { useParams } from "react-router-dom"
 import Card from "../components/Card"
@@ -92,7 +93,7 @@ const IndividualProfile = () => {
     return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" })
   }
 
-  const getEventInfo = (event: any) => {
+  const getEventInfo = (event: GithubEvent) => {
     const repo = event.repo?.name
     const p = event.payload
     switch (event.type) {
@@ -162,7 +163,7 @@ const IndividualProfile = () => {
                     {new Date(user.createdAt).toLocaleDateString("en-US", {
                       month: "long",
                       year: "numeric",
-                      day: "numeric"
+                      day: "numeric"  
                     })}
                   </p>
                 </span>
@@ -222,7 +223,7 @@ const IndividualProfile = () => {
             </aside>
 
             <aside className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {pinnedRepos && pinnedRepos.map((repo: any, idx: number) => (
+              {pinnedRepos && pinnedRepos.map((repo: PinnedRepo, idx: number) => (
                 <Card key={idx} className="p-5 flex flex-col gap-3">
                   <span className="flex justify-between items-center">
                     <h2 className="text-lg font-semibold text-white capitalize">{repo.name}</h2>
@@ -235,7 +236,7 @@ const IndividualProfile = () => {
 
                     <aside className="flex items-center gap-1">
                       <div className="w-2 h-2 rounded-full" style={{ backgroundColor: repo.primaryLanguage?.color }}></div>
-                      <p >{repo.primaryLanguage.name}</p>
+                      <p >{repo.primaryLanguage?.name}</p>
                     </aside>
 
                     <aside className="flex items-center gap-1">
@@ -261,7 +262,7 @@ const IndividualProfile = () => {
             </aside>
 
             <aside className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {starred.map((each: any, idx: number) => (
+              {starred.map((each: StarredRepo, idx: number) => (
                 <Card className="p-3 flex items-center space-x-3" key={idx}>
                   <img src={each?.owner?.avatar_url} alt={each?.owner?.name} className="rounded-sm border border-[#2E343B]" width={40} height={40} />
                   <div className="flex flex-col">
@@ -283,7 +284,7 @@ const IndividualProfile = () => {
           </aside>
 
           <Card className="divide-y divide-[#23282E]">
-            {recentEvents?.length > 0 ? recentEvents.map((event: any) => {
+            {recentEvents?.length > 0 ? recentEvents.map((event: GithubEvent) => {
               const { icon, color, label, sub, message } = getEventInfo(event)
               return (
                 <div key={event.id} className="flex items-start gap-3 p-4">
