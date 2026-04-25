@@ -1,6 +1,7 @@
 import { LoadingSpinner } from "@/components/ui/spinner"
 import ErrorToast from "@/components/ui/error-toast"
 import { useFetchRepoIntelligenceDatas } from "@/services/individualDashboardCalls/fetchRepoIntelligenceData"
+import type { RepositoryNode } from "@/types"
 import { useParams } from "react-router-dom"
 import Card from "../components/Card"
 import BarsForMostActiveRepos from "../components/BarsForMostActiveRepos"
@@ -48,12 +49,12 @@ const IndividualRepoIntelligence = () => {
   const totalRepoCount = overview?.totalCount
 
   //get totalStars
-  const totalStars = overview?.nodes?.reduce((acc: any, r: any) =>
+  const totalStars = overview?.nodes?.reduce((acc: number, r: RepositoryNode) =>
     acc + (r.stargazerCount ?? 0), 0
   )
 
   //get totalForks
-  const totalFork = overview?.nodes?.reduce((acc: any, r: any) =>
+  const totalFork = overview?.nodes?.reduce((acc: number, r: RepositoryNode) =>
     acc + (r.forkCount ?? 0), 0
   )
 
@@ -61,7 +62,7 @@ const IndividualRepoIntelligence = () => {
 
   // get most used Language
   const arr: string[] = []
-  overview?.nodes?.map((node: any) => {
+  overview?.nodes?.map((node: RepositoryNode) => {
 
     if (node?.primaryLanguage?.name) {
       arr.push(node.primaryLanguage.name)
@@ -81,8 +82,8 @@ const IndividualRepoIntelligence = () => {
 
   //filter array with last 30days updated fiel
   const activeRepos = overview?.nodes
-    ?.filter((node: any) => thirtyDaysAgo <= node.updatedAt)
-    ?.map((node: any) => ({ name: node.name, totalCount: node.defaultBranchRef?.target?.history?.totalCount }))
+    ?.filter((node: RepositoryNode) => thirtyDaysAgo <= node.updatedAt)
+    ?.map((node: RepositoryNode) => ({ name: node.name, totalCount: node.defaultBranchRef?.target?.history?.totalCount }))
 
 
   // Get Dead repos
@@ -91,8 +92,8 @@ const IndividualRepoIntelligence = () => {
   const sixMonthBefore = date.toISOString()
 
   const deadRepos = overview?.nodes
-    ?.filter((node: any) => sixMonthBefore >= node.updatedAt)
-    ?.map((node: any) => ({ name: node.name, updatedAt: node.updatedAt, diskUsage: node.diskUsage ?? 0 }))
+    ?.filter((node: RepositoryNode) => sixMonthBefore >= node.updatedAt)
+    ?.map((node: RepositoryNode) => ({ name: node.name, updatedAt: node.updatedAt, diskUsage: node.diskUsage ?? 0 }))
 
 
   return (
