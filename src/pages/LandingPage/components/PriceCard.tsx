@@ -45,9 +45,9 @@ const PriceCard = () => {
                         {
                             data.price == 0 ?
                                 // if Free, login
-                                <Button onClick={() => { }} label="Login with Github" icon={<LogIn color="#ffffff" strokeWidth={1.25} />} bgColor="#238636" textColor="#ffffff" />
+                                <Button label="Login with Github" icon={<LogIn color="#ffffff" strokeWidth={1.25} />} bgColor="#238636" textColor="#ffffff" />
                                 :
-                                <Button onClick={() => { }} label="Checkout Now" icon={<CreditCard color="#ffffff" strokeWidth={1.25} />} bgColor="#30363D" textColor="#ffffff" />
+                                <Button label="Checkout Now" icon={<CreditCard color="#ffffff" strokeWidth={1.25} />} bgColor="#30363D" textColor="#ffffff" />
                         }
                         {/* <LogIn color="#ffffff" strokeWidth={1.25} /> */}
                     </div>
