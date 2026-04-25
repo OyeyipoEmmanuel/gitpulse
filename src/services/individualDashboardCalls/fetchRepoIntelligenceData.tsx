@@ -1,6 +1,7 @@
 import { fetchGraphQL } from "@/lib/github"
 import { useAuthStore } from "@/store/authStore"
 import { useQuery } from "@tanstack/react-query"
+import type { RepositoryNode, StargazerEdge } from "@/types"
 
 const OVERVIEW_QUERY = `
 query($username: String!, $since: GitTimestamp!) {
@@ -68,18 +69,18 @@ export const useFetchRepoIntelligenceDatas = (username: string | null) => {
                 since: since.toISOString()
             }, token)            
 
-            const repos = overview?.user?.repositories?.nodes?.map((n:any) => n.name)
+            const repos = overview?.user?.repositories?.nodes?.map((n: RepositoryNode) => n.name)
 
             // fetch stars for repos
             const starResults = await Promise.all(
-                repos.map((repo:any) =>
+                repos.map((repo: string) =>
                     fetchGraphQL(STAR_GROWTH_QUERY, { owner: username, repo }, token)
                 )
             )
 
             const allStarDates = starResults
-                .flatMap(r => r?.repository?.stargazers?.edges?.map((e: any) => e.starredAt))
-                .filter((date: any) => date != undefined)
+                .flatMap(r => r?.repository?.stargazers?.edges?.map((e: StargazerEdge) => e.starredAt))
+                .filter((date: string | undefined) => date != undefined)
                 .reduce((acc: Record<string, number>, date: string) => {
                     const day = date.slice(0, 10)
                     acc[day] = (acc[day] ?? 0) + 1
