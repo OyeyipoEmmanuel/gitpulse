@@ -8,6 +8,7 @@ import {
 import { useFetchIndividualRepos } from "@/services/fetchRepos"
 import { useState } from "react"
 import { useParams } from "react-router-dom"
+import type { GithubRepo } from "@/types"
 
 type Selected = {
     name: string;
@@ -56,7 +57,7 @@ if(isPending) console.log("Pend")
                     <DropdownMenuRadioGroup
                         value={selected.name}
                         onValueChange={(name) => {
-                            const repo = data.find((r: any) => r.name === name)
+                            const repo = data.find((r: GithubRepo) => r.name === name)
 
                             if (repo) setSelected({
                                 name: repo.name,
@@ -64,7 +65,7 @@ if(isPending) console.log("Pend")
                                 avatar: repo.owner.avatar_url
                             })
                         }}>
-                        {data && data.map((each: any, idx: number) => (
+                        {data && data.map((each: GithubRepo, idx: number) => (
                             <DropdownMenuRadioItem value={each.name} className=" capitalize" key={idx}>{each.name}</DropdownMenuRadioItem>
                         ))}
                     </DropdownMenuRadioGroup>
