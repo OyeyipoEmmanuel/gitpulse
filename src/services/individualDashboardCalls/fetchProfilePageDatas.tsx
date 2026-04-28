@@ -44,35 +44,35 @@ const PROFILE_OVERVIEW_QUERY = `
 
 export const useFetchProfilePageDatas = (username: string | null) => {
 
-    const { getToken, loading } = useAuthStore()
+  const { getToken, loading } = useAuthStore()
 
 
-    const url = import.meta.env.VITE_GITHUB_API_URL
+  const url = import.meta.env.VITE_GITHUB_API_URL
 
-    return useQuery({
-        queryKey: ['fetch_profilepage_datas', username],
-        enabled: !loading && !!username,
-        queryFn: async () => {
-            const token = await getToken()
-            if (!token) throw new Error("No auth token available")
+  return useQuery({
+    queryKey: ['fetch_profilepage_datas', username],
+    enabled: !loading && !!username,
+    queryFn: async () => {
+      const token = await getToken()
+      if (!token) throw new Error("No auth token available")
 
-            const [graphqlData, starredRepos, recentEvents] = await Promise.all([
-                //graphqlfetch
-                fetchGraphQL(PROFILE_OVERVIEW_QUERY, { username }, token),
+      const [graphqlData, starredRepos, recentEvents] = await Promise.all([
+        //graphqlfetch
+        fetchGraphQL(PROFILE_OVERVIEW_QUERY, { username }, token),
 
-                //starred repos
-                fetch(`${url}/users/${username}/starred?per_page=4`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                }).then((res) => res.json()),
+        //starred repos
+        fetch(`${url}/users/${username}/starred?per_page=4`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).then((res) => res.json()),
 
-                //recent events
-                fetch(`${url}/users/${username}/events?per_page=4`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                }).then((res) => res.json()),
-            ])
+        //recent events
+        fetch(`${url}/users/${username}/events?per_page=4`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).then((res) => res.json()),
+      ])
 
-            return { graphqlData, starredRepos, recentEvents }
-        }
-    })
+      return { graphqlData, starredRepos, recentEvents }
+    }
+  })
 
 }
