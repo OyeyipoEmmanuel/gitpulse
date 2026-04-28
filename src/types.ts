@@ -81,6 +81,7 @@ export interface RepositoryNode {
   isArchived: boolean;
   diskUsage: number;
   stargazerCount: number;
+  pullRequests: {totalCount: number}
   forkCount: number;
   primaryLanguage: { name: string; color?: string } | null;
   openIssues: { totalCount: number };
@@ -118,4 +119,17 @@ export interface YoYReview {
             contributionCalendar : {totalContributions: number}
         },
     }
+}
+
+export interface ReportCardDimesions {
+  label: string
+  grade: string | null | undefined
+  stats: Record<string, string | number>
+}
+
+export interface CodeQualityNode{
+  additions: number
+  deletions: number
+  state: "MERGED" | "CLOSED" | "OPEN", 
+  repository : {name: string}
 }
