@@ -221,7 +221,7 @@ const IndividualProductivity = () => {
 
                     <div className="flex flex-col gap-2 pt-6">
                         <span>
-                            <p className="text-[12px] uppercase text-graySubtextColor tracking-wider font-semibold">Total Jan - {yoy.thisYearDate}</p>
+                            <p className="text-[12px] uppercase text-graySubtextColor tracking-wider font-semibold">Total Jan - {yoy.thisYearDate.split(' ')[0]} <span className="text-secondaryTextColor font-extrabold">{yoy.thisYearDate.split(' ')[1]}</span></p>
                             <p className="text-white font-semibold text-4xl numbersFont">{yoy.thisYearContribution}</p>
                         </span>
 
@@ -240,18 +240,14 @@ const IndividualProductivity = () => {
                         </div>
 
                         <span>
-                            <p className="text-[12px] uppercase text-graySubtextColor tracking-wider font-semibold">Total {yoy.lastYearDate} - Dec</p>
+                            <p className="text-[12px] uppercase text-graySubtextColor tracking-wider font-semibold">Total Jan - {yoy.lastYearDate.split(' ')[0]} <span className="text-secondaryTextColor font-extrabold">{yoy.lastYearDate.split(' ')[1]}</span></p>
                             <p className="text-3xl numbersFont text-graySubtextColor">{yoy.lastYearContribution}</p>
                         </span>
-
-
-
-
-
                     </div>
                 </Card>
             </section>
 
+            {/* Most productive day and hourly perf */}
             <section className="flex flex-col gap-5 md:flex-row w-full">
                 <div className="md:w-1/2">
                     <MostProductiveDaysChart data={mostProductiveDaysData} />
