@@ -10,6 +10,7 @@ import IndividualProfile from "@/pages/Dashboard/individual/pages/IndividualProf
 import OrgProfile from "@/pages/Dashboard/organization/pages/OrgProfile";
 import IndividualRepoIntelligence from "@/pages/Dashboard/individual/pages/IndividualRepoIntelligence";
 import IndividualProductivity from "@/pages/Dashboard/individual/pages/IndividualProductivity";
+import IndividualReportCard from "@/pages/Dashboard/individual/pages/IndividualReportCard";
 
 export const routes: RouteObject[] = [
     {
@@ -49,7 +50,7 @@ export const routes: RouteObject[] = [
                             { path: "profile", element: <IndividualProfile /> },
                             { path: "repo-intelligence", element: <IndividualRepoIntelligence /> },
                             { path: "productivity", element: <IndividualProductivity /> },
-                            { path: "collaborations", element: <div /> },
+                            { path: "dev-report-card", element: <IndividualReportCard /> },
                             { path: "impact-summary", element: <div /> },
                             { path: "career-snapshot", element: <div /> },
                         ]
