@@ -65,6 +65,29 @@ const YoY_QUERY = `
   }
 `
 
+export const fetchProductivityDatas = async (username: string, token: string) => {
+  const [getStreak, consistencyData, yoyReview, eventsRes] = await Promise.all([
+    fetchGraphQL(STREAK_QUERY, { username }, token),
+
+    fetchGraphQL(CONSISTENCY_QUERY, {
+      username,
+      from: oneYearAgo.toISOString(),
+      to: today.toISOString(),
+    }, token),
+
+    fetchGraphQL(YoY_QUERY, { username, thisYearStart, thisYearEnd, lastYearStart, lastYearEnd }, token),
+
+    fetch(`https://api.github.com/users/${username}/events?per_page=100`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/vnd.github+json",
+      },
+    }).then(r => r.ok ? r.json() : [])
+  ])
+
+  return { getStreak, consistencyData, yoyReview, eventsData: Array.isArray(eventsRes) ? eventsRes : [] }
+}
+
 export const useFetchProductivityDatas = (username: string | null) => {
   const { getToken, loading } = useAuthStore()
 
@@ -74,27 +97,7 @@ export const useFetchProductivityDatas = (username: string | null) => {
     queryFn: async () => {
       const token = await getToken()
       if (!token) throw new Error("No auth token available")
-
-      const [getStreak, consistencyData, yoyReview, eventsRes] = await Promise.all([
-        fetchGraphQL(STREAK_QUERY, { username }, token),
-
-        fetchGraphQL(CONSISTENCY_QUERY, {
-          username,
-          from: oneYearAgo.toISOString(),
-          to: today.toISOString(),
-        }, token),
-
-        fetchGraphQL(YoY_QUERY, { username, thisYearStart, thisYearEnd, lastYearStart, lastYearEnd }, token),
-
-        fetch(`https://api.github.com/users/${username}/events?per_page=100`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/vnd.github+json",
-          },
-        }).then(r => r.ok ? r.json() : [])
-      ])
-
-      return { getStreak, consistencyData, yoyReview, eventsData: Array.isArray(eventsRes) ? eventsRes : [] }
+      return fetchProductivityDatas(username!, token)
     }
   })
 }
