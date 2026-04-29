@@ -1,12 +1,22 @@
 interface GradeCalculator {
   totalScore: number;
   grade: string | null;
+  color: string | null;
 }
+
+const GRADE_COLORS: Record<string, string> = {
+  A: "#238636", // green
+  B: "#1F6FEB", // blue
+  C: "#EAB308", // yellow
+  D: "#F97316", // orange
+  E: "#EF4444", // red
+  F: "#7D8590", // gray
+};
 
 export const gradeCalculator = (scores: number[]): GradeCalculator | null => {
 
   if (scores.length == 0) return null;
-  
+
   const totalScore = scores.reduce((acc, r) => acc + r, 0) / scores.length;
 
   let grade: "A" | "B" | "C" | "D" | "E" | "F" | null = null;
@@ -22,5 +32,6 @@ export const gradeCalculator = (scores: number[]): GradeCalculator | null => {
   return {
     totalScore,
     grade,
+    color: grade ? GRADE_COLORS[grade] : null,
   };
 };
