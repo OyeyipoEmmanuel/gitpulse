@@ -10,7 +10,7 @@ import type { YoYReview } from "@/types";
 import { MostProductiveDaysChart, HourlyPerformanceChart } from "@/components/charts";
 
 
-function getCurrentStreak(daysArr: { contributionCount: number, date: string }[]) {
+export function getCurrentStreak(daysArr: { contributionCount: number, date: string }[]) {
     if (daysArr.length === 0) return 0
     let count = 0
     let i = daysArr.length - 1
@@ -61,7 +61,7 @@ function formatDate(dateStr: string) {
     return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
-function calculateConsistencyScore(weeks: any[]) {
+export function calculateConsistencyScore(weeks: any[]) {
     // const days = weeks.flatMap(w => w.contributionDays)
 
     // only count days up to today (calendar includes future days)
@@ -111,8 +111,6 @@ const IndividualProductivity = () => {
     if (error) return <ErrorToast message={error.message} />
     if (isPending) return <LoadingSpinner className="text-green-500 w-32 h-32" />
 
-    console.log(data.yoyReview)
-
 
     const daysOfStreaks = data?.getStreak?.user?.contributionsCollection?.contributionCalendar?.weeks?.flatMap((w: any) => w.contributionDays)
 
@@ -121,7 +119,6 @@ const IndividualProductivity = () => {
     const longestStreak = getLongestStreak(daysOfStreaks)
 
     const consistencyScore = calculateConsistencyScore(last12MonthsDays)
-    console.log(consistencyScore)
 
     const yoy = yoyReview(data?.yoyReview)
 
