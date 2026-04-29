@@ -124,6 +124,7 @@ export interface YoYReview {
 export interface ReportCardDimesions {
   label: string
   grade: string | null | undefined
+  gradeColor: string | null | undefined
   stats: Record<string, string | number>
 }
 
