@@ -80,8 +80,9 @@ export interface RepositoryNode {
   pushedAt: string;
   isArchived: boolean;
   diskUsage: number;
+  isFork: boolean
   stargazerCount: number;
-  pullRequests: {totalCount: number}
+  pullRequests: { totalCount: number };
   forkCount: number;
   primaryLanguage: { name: string; color?: string } | null;
   openIssues: { totalCount: number };
@@ -97,6 +98,7 @@ export interface RepositoryNode {
       history: { totalCount: number };
     };
   } | null;
+  object: { text: string } | null;
 }
 
 export interface StargazerEdge {
@@ -111,26 +113,51 @@ export interface CompetencyLevelChartProps {
 }
 
 export interface YoYReview {
-    user: {
-        thisYear: {
-            contributionCalendar : {totalContributions: number}
-        },
-        lastYear: {
-            contributionCalendar : {totalContributions: number}
-        },
-    }
+  user: {
+    thisYear: {
+      contributionCalendar: { totalContributions: number };
+    };
+    lastYear: {
+      contributionCalendar: { totalContributions: number };
+    };
+  };
 }
 
 export interface ReportCardDimesions {
-  label: string
-  grade: string | null | undefined
-  gradeColor: string | null | undefined
-  stats: Record<string, string | number>
+  label: string;
+  grade: string | null | undefined;
+  gradeColor: string | null | undefined;
+  gradeScore: number
+  stats: Record<string, string | number>;
+  bars?: { label: string; value: number; total: number }[];
 }
 
-export interface CodeQualityNode{
-  additions: number
-  deletions: number
-  state: "MERGED" | "CLOSED" | "OPEN", 
-  repository : {name: string}
+export interface CodeQualityNode {
+  additions: number;
+  deletions: number;
+  state: "MERGED" | "CLOSED" | "OPEN";
+  repository: { name: string };
 }
+
+export interface CollaborationQuery {
+  totalCount: number
+  nodes: {
+    pullRequest: {
+      createdAt: string;
+      comments: { totalCount: number };
+      reviews: { totalCount: number };
+    };
+    occurredAt: string;
+  }[];
+}
+
+export interface OpenSourceNode {
+  repository: {
+    name: string
+    nameWithOwner: string
+    owner: {login: string}
+    stargazerCount: number
+  }
+  mergedAt: string
+}
+
