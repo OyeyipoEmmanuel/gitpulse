@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -20,6 +20,15 @@ body {
 .numbersFont {
   font-family: "Orbitron", sans-serif;
   font-optical-sizing: auto;
+}
+
+.gradientBg {
+  background: #11221c;
+  background: radial-gradient(
+    circle,
+    rgba(17, 34, 28, 1) 0%,
+    rgba(13, 17, 23, 1) 49%
+  );
 }
 
 @theme {
