@@ -217,7 +217,14 @@ const IndividualReportCard = () => {
                 <p className="tracking-wider font-semibold text-graySubtextColor uppercase pt-5">overall developer score</p>
 
                 {/* Comment */}
-                <div></div>
+                <p className="text-xl text-center text-white pt-3 max-w-md font-semibold">
+                    {overallGrade?.grade === "A" && "You're performing exceptionally across all dimensions. Keep it up!"}
+                    {overallGrade?.grade === "B" && "Solid performance overall. A few areas to polish and you're at the top."}
+                    {overallGrade?.grade === "C" && "You're on a good track but there's meaningful room for improvement."}
+                    {overallGrade?.grade === "D" && "Some dimensions need attention. Focus on consistency and collaboration."}
+                    {overallGrade?.grade === "E" && "Several areas are underperforming. Small daily habits can turn this around."}
+                    {overallGrade?.grade === "F" && "It's a tough start, but every expert was once a beginner. Keep pushing."}
+                </p>
 
                 {/* stat with grade */}
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full pt-5">
