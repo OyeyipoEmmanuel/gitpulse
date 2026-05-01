@@ -33,9 +33,9 @@ query($username: String!) {
 }`
 
 const COLLABORATION_QUERY = `
-query($username: String!, $from: DateTime!, $to: DateTime!) {
+query($username: String!) {
   user(login: $username) {
-    contributionsCollection(from: $from, to: $to) {
+    contributionsCollection {
       pullRequestReviewContributions(first: 100) {
         totalCount
         nodes {
@@ -69,38 +69,38 @@ query($username: String!) {
 }`
 
 export const useFetchReportCardDatas = (username: string | null) => {
-    const { getToken, loading } = useAuthStore()
-    const queryClient = useQueryClient()
+  const { getToken, loading } = useAuthStore()
+  const queryClient = useQueryClient()
 
-    return useQuery({
-        queryKey: ['fetch_report_card_datas', username],
-        enabled: !loading && !!username,
-        queryFn: async () => {
-            const token = await getToken()
-            if (!token) throw new Error("No auth token available")
+  return useQuery({
+    queryKey: ['fetch_report_card_datas', username],
+    enabled: !loading && !!username,
+    queryFn: async () => {
+      const token = await getToken()
+      if (!token) throw new Error("No auth token available")
 
-            const [repoData, productivityData] = await Promise.all([
-                queryClient.fetchQuery({
-                    queryKey: ['fetch_repo_intelligence_datas', username],
-                    queryFn: () => fetchRepoIntelligenceDatas(username!, token),
-                    staleTime: Infinity,
-                }),
-                queryClient.fetchQuery({
-                    queryKey: ['fetch_productivity_datas', username],
-                    queryFn: () => fetchProductivityDatas(username!, token),
-                    staleTime: Infinity,
-                }),
-            ])
+      const [repoData, productivityData] = await Promise.all([
+        queryClient.fetchQuery({
+          queryKey: ['fetch_repo_intelligence_datas', username],
+          queryFn: () => fetchRepoIntelligenceDatas(username!, token),
+          staleTime: Infinity,
+        }),
+        queryClient.fetchQuery({
+          queryKey: ['fetch_productivity_datas', username],
+          queryFn: () => fetchProductivityDatas(username!, token),
+          staleTime: Infinity,
+        }),
+      ])
 
 
-            const [codeQuality, collab, openSource] = await Promise.all([
-                fetchGraphQL(CODE_QUALITY_QUERY, { username }, token),
-                fetchGraphQL(COLLABORATION_QUERY, { username, from: oneYearAgo.toISOString(), to: today.toISOString() }, token),
-                fetchGraphQL(OPEN_SOURCE_QUERY, { username }, token),
+      const [codeQuality, collab, openSource] = await Promise.all([
+        fetchGraphQL(CODE_QUALITY_QUERY, { username }, token),
+        fetchGraphQL(COLLABORATION_QUERY, { username }, token),
+        fetchGraphQL(OPEN_SOURCE_QUERY, { username }, token),
 
-            ])
+      ])
 
-            return {repoData, productivityData, codeQuality, collab, openSource}
-        }
-    })
+      return { repoData, productivityData, codeQuality, collab, openSource }
+    }
+  })
 }
