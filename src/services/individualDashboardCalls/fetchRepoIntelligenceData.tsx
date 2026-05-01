@@ -15,6 +15,7 @@ query($username: String!, $since: GitTimestamp!) {
         diskUsage
         stargazerCount
         forkCount
+        isFork
         primaryLanguage { name }
         openIssues: issues(states: OPEN) { totalCount }
         openPRs: pullRequests(states: OPEN) { totalCount }
