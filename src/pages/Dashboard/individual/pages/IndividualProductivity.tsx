@@ -149,7 +149,7 @@ const IndividualProductivity = () => {
     }))
 
     return (
-        <main className="py-4 px-4 md:px-0 flex flex-col gap-6">
+        <main className="py-4 px-4 flex flex-col gap-6">
             <section className="flex flex-col gap-5 md:flex-row w-full">
 
                 <div className="flex flex-col gap-5 md:w-[30%]">
