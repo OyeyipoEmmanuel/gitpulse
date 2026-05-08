@@ -161,3 +161,13 @@ export interface OpenSourceNode {
   mergedAt: string
 }
 
+export interface TotalContributionObjectType {
+  user: {
+    [year: string]: {
+      contributionCalender:{
+        totalContribution: number
+      }
+    }
+  }
+}
+
