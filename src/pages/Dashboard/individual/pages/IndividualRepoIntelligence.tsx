@@ -97,7 +97,7 @@ const IndividualRepoIntelligence = () => {
 
 
   return (
-    <main className="py-4 px-4 md:px-0 flex flex-col gap-6">
+    <main className="py-4 px-4 flex flex-col gap-6">
       {/* Stats */}
       <Card className="flex flex-col md:flex-row items-center justify-between w-full">
         <div className="flex w-full p-5 flex-col border-b md:border-b-0 md:border-r border-[#2A2F36] space-y-2">
