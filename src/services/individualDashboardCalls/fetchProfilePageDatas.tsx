@@ -42,12 +42,31 @@ const PROFILE_OVERVIEW_QUERY = `
   }
 `
 
+export const fetchProfilePageDatas = async (username: string | null, token: string) => {
+
+  const url = import.meta.env.VITE_GITHUB_API_URL
+
+  const [graphqlData, starredRepos, recentEvents] = await Promise.all([
+    //graphqlfetch
+    fetchGraphQL(PROFILE_OVERVIEW_QUERY, { username }, token),
+
+    //starred repos
+    fetch(`${url}/users/${username}/starred?per_page=4`, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).then((res) => res.json()),
+
+    //recent events
+    fetch(`${url}/users/${username}/events?per_page=4`, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).then((res) => res.json()),
+  ])
+
+  return { graphqlData, starredRepos, recentEvents }
+}
+
 export const useFetchProfilePageDatas = (username: string | null) => {
 
   const { getToken, loading } = useAuthStore()
-
-
-  const url = import.meta.env.VITE_GITHUB_API_URL
 
   return useQuery({
     queryKey: ['fetch_profilepage_datas', username],
@@ -56,22 +75,8 @@ export const useFetchProfilePageDatas = (username: string | null) => {
       const token = await getToken()
       if (!token) throw new Error("No auth token available")
 
-      const [graphqlData, starredRepos, recentEvents] = await Promise.all([
-        //graphqlfetch
-        fetchGraphQL(PROFILE_OVERVIEW_QUERY, { username }, token),
+      return fetchProfilePageDatas(username, token)
 
-        //starred repos
-        fetch(`${url}/users/${username}/starred?per_page=4`, {
-          headers: { Authorization: `Bearer ${token}` }
-        }).then((res) => res.json()),
-
-        //recent events
-        fetch(`${url}/users/${username}/events?per_page=4`, {
-          headers: { Authorization: `Bearer ${token}` }
-        }).then((res) => res.json()),
-      ])
-
-      return { graphqlData, starredRepos, recentEvents }
     }
   })
 
