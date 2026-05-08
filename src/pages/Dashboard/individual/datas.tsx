@@ -2,7 +2,7 @@ import type { DashboardNavCOntentType } from "@/types";
 import { UserRound } from "lucide-react";
 import { FaCode } from "react-icons/fa6";
 import { PiGauge } from "react-icons/pi";
-import { PiTrendUp } from "react-icons/pi";
+import { SiProbot } from "react-icons/si";
 import { MdWorkOutline } from "react-icons/md";
 import { TbReportAnalytics } from "react-icons/tb";
 
@@ -29,13 +29,13 @@ export const navContent: DashboardNavCOntentType[] = [
     icon: <TbReportAnalytics size={20} color="#94A3B8" />
   },
   {
-    label: "Impact Summary",
-    path: "impact-summary",
-    icon: <PiTrendUp size={20} color="#94A3B8" />
-  },
-  {
     label: "Career Snapshot",
     path: "career-snapshot",
     icon: <MdWorkOutline size={20} color="#94A3B8" />
+  },
+  {
+    label: "Ask Bob",
+    path: "ask-bob",
+    icon: <SiProbot size={20} color="#94A3B8" />
   },
 ]
