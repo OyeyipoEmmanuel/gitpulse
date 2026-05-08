@@ -5,7 +5,7 @@ import { fetchRepoIntelligenceDatas } from "./fetchRepoIntelligenceData"
 import { fetchProductivityDatas } from "./fetchProductivityDatas"
 
 //Get this time last year date
-const today = new Date()
+// const today = new Date()
 // const thisYearStart = `${today.getFullYear()}-01-01T00:00:00Z`
 // const thisYearEnd = today.toISOString()
 // const lastYearStart = `${today.getFullYear() - 1}-01-01T00:00:00Z`
@@ -15,7 +15,7 @@ const today = new Date()
 //   today.getDate()
 // ).toISOString()
 
-const oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate())
+// const oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate())
 
 
 const CODE_QUALITY_QUERY = `
