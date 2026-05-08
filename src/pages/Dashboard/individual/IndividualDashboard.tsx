@@ -21,7 +21,7 @@ const IndividualDashboard = () => {
         <DashboardTopNav onMenuToggle={() => setMobileNavOpen(prev => !prev)} />
 
         {/* Pages */}
-        <div className='md:px-4'>
+        <div className=''>
           <Outlet />
         </div>
 
