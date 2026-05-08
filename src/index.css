@@ -31,6 +31,15 @@ body {
   );
 }
 
+.fullPageGradientBg {
+  background: #11221c;
+  background: linear-gradient(
+    165deg,
+    rgba(17, 34, 28, 1) 0%,
+    rgba(13, 17, 23, 1) 49%
+  );
+}
+
 @theme {
   --color-primaryBg: #0d1117;
   --color-secondaryTextColor: #238636;
