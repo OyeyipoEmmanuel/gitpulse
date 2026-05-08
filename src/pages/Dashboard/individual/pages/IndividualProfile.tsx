@@ -129,7 +129,7 @@ const IndividualProfile = () => {
   }
 
   return (
-    <main className="flex flex-col py-5 px-4 md:px-0">
+    <main className="flex flex-col py-5 px-4">
       {/* Top */}
       <section className="flex flex-col space-y-5">
 
