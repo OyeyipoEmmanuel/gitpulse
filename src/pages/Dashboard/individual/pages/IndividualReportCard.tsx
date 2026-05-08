@@ -69,7 +69,7 @@ function consistencyFunc(
     }
 }
 
-function collaborationFunc(collabData: CollaborationQuery, openSourceData: OpenSourceNode[], username: string): ReportCardDimesions {
+export function collaborationFunc(collabData: CollaborationQuery, openSourceData: OpenSourceNode[], username: string): ReportCardDimesions {
     const prsReviewed = collabData?.totalCount
     const prsReviewedPercentageScore = Math.min((prsReviewed / 10) * 100, 100)
 
@@ -97,7 +97,7 @@ function collaborationFunc(collabData: CollaborationQuery, openSourceData: OpenS
     }
 }
 
-function openSourceFunc(data: OpenSourceNode[], username: string): ReportCardDimesions {
+export function openSourceFunc(data: OpenSourceNode[], username: string): ReportCardDimesions {
     const extRepos = data.filter(node => node.repository.owner.login !== username)
 
     const extRepoContributedTo = new Set(extRepos.map(node => node.repository.nameWithOwner)).size
@@ -202,7 +202,7 @@ const IndividualReportCard = () => {
     
 
     return (
-        <main className="flex flex-col py-5 px-4 md:px-0">
+        <main className="flex flex-col py-5 px-4">
             <p className="text-graySubtextColor ">How you measure up as a developer and collaborator</p>
 
             {/* Overall score */}
