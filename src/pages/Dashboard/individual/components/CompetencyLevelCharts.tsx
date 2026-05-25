@@ -73,7 +73,7 @@ const Progress = ({ data }: { data: CompetencyLevelChartProps }) => {
             {res.map((each, idx) => (
                 <div className="grid grid-cols-3 gap-4 w-full items-center" key={idx}>
                     <p className="w-full text-graySubtextColor text-sm">{each.label}</p>
-                    <div className="w-[96px] h-[6px] bg-[#30363D] rounded-full" >
+                    <div className="w-[100%] h-[6px] bg-[#30363D] rounded-full" >
                         <div className="h-full rounded-l-full" style={{
                             width: `${each.percentage}%`,
                             backgroundColor: `${each.color}`
