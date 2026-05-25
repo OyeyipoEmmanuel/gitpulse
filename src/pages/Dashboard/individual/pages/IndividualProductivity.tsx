@@ -204,7 +204,7 @@ const IndividualProductivity = () => {
                     </div>
 
 
-                    <div className="flex flex-col items-center justify-center md:flex-row md:justify-start">
+                    <div className="flex flex-row items-center justify-center md:flex-row md:justify-start">
                         <CompetencyLevelCharts datas={data?.consistencyData?.user?.contributionsCollection} consistencyScore={consistencyScore.score} />
                     </div>
                 </Card>
