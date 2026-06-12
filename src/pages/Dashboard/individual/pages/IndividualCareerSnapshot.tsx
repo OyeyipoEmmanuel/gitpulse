@@ -3,15 +3,18 @@ import { LoadingSpinner } from "@/components/ui/spinner"
 import { fetchGraphQL } from "@/lib/github"
 import { useFetchCareerSnapshot } from "@/services/individualDashboardCalls/fetchCareerSnapshotDatas"
 import { useAuthStore } from "@/store/authStore"
-import type { RepositoryNode, TotalContributionObjectType } from "@/types"
+import type { RepositoryNode, TotalContributionObjectType, ProfileCardDetails } from "@/types"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { openSourceFunc } from "./IndividualReportCard"
 import Card from "../components/Card"
 import { getTimeAgo } from "@/lib/timeAgo"
+import { getLongestStreak } from "@/lib/streakCalculator"
 import { GrLineChart } from "react-icons/gr";
 import { IoStarSharp } from "react-icons/io5";
 import { MdOutlineFileDownload } from "react-icons/md";
+import { BsPatchCheck } from "react-icons/bs";
+
 
 
 
@@ -44,13 +47,22 @@ async function getAllTimeContributionCount(
                     ? currentDate
                     : `${year}-12-31T23:59:59Z`
 
+            // For current year, include weeks/days for streak calculation
+            const weeksFragment = year === currentYear ? `
+          weeks {
+            contributionDays {
+              date
+              contributionCount
+            }
+          }` : ""
+
             return `
         y${year}: contributionsCollection(
           from: "${from}"
           to: "${to}"
         ) {
           contributionCalendar {
-            totalContributions
+            totalContributions${weeksFragment}
           }
         }
       `
@@ -115,7 +127,7 @@ const IndividualCareerSnapshot = () => {
         async function loadContributions() {
             try {
                 const datas = await getAllTimeContributionCount(
-                    data?.userGithubAge,
+                    data?.userProfile?.createdAt ?? "",
                     params.username ?? "",
                     getToken
                 )
@@ -126,16 +138,16 @@ const IndividualCareerSnapshot = () => {
             }
         }
 
-        if (data?.userGithubAge && params.username) {
+        if (data?.userProfile && params.username) {
             loadContributions()
         }
-    }, [data?.userGithubAge, params.username])
+    }, [data?.userProfile, params.username])
 
     if (error) return <ErrorToast message={error.message} />
     if (isPending || loading) return <LoadingSpinner className="text-green-500 w-32 h-32" />
 
 
-    const githubAge = getTimeAgo(data?.userGithubAge)
+    const githubAge = getTimeAgo(data?.userProfile?.createdAt)
     console.log(githubAge)
 
     const totalContributionCount = Object.values(totalContributionObject?.user || {}).reduce(
@@ -143,6 +155,8 @@ const IndividualCareerSnapshot = () => {
             sum + yearData.contributionCalendar.totalContributions,
         0
     )
+
+    console.log(totalContributionObject)
 
     //Get busiest year
     const busiestYear = Object.entries(totalContributionObject ? totalContributionObject?.user : {}).reduce((max: { year: string; count: number }, [year, yearData]: [string, any]) =>
@@ -162,14 +176,36 @@ const IndividualCareerSnapshot = () => {
 
     const langMastered = getLanguageMastered(data?.reportCard?.repoData?.overview?.user?.repositories?.nodes)
 
+    // Calculate longest streak from current year data
+    const currentYearKey = `y${new Date().getFullYear()}`
+    const currentYearDays = totalContributionObject?.user?.[currentYearKey]?.contributionCalendar?.weeks
+        ?.flatMap((w: any) => w.contributionDays) ?? []
+    const longestStreakData = getLongestStreak(currentYearDays)
+
+    console.log(data?.userProfile)
+
+    const profileCardDetails: ProfileCardDetails = {
+        profileImg: data?.userProfile?.avatarUrl,
+        name: data?.userProfile?.name,
+        login: data?.userProfile?.login,
+        githubAge: githubAge,
+        topTechnology: langMastered[0],
+        totalCodeAct: totalContributionCount,
+        ossMerged: OSContributionCount,
+        longestStreak: longestStreakData.count,
+        memberTier: githubAge.years >= 5 ? "Veteran"
+            : githubAge.years >= 2 ? "Established"
+                : "Rising"
+    }
+
 
     return (
         <main className="fullPageGradientBg min-h-screen">
-            <section className="py-4 px-4 flex flex-col gap-6">
+            <section className="py-4 px-4 flex flex-col gap-12">
                 <div className="flex flex-col justify-between md:flex-row">
                     <p className="text-graySubtextColor">A high-fidelity analysis of your engineering journey on Github.</p>
-                    <button className="w-fit self-end tracking-tight bg-[#248637] rounded-xs text-center px-6 py-2 md:self-start text-white text-sm font-semibold cursor-pointer hover:opacity-70 transition-all duration-200 flex items-center gap-2">
-                        <MdOutlineFileDownload />
+                    <button className="w-fit self-end tracking-tight bg-[#248637] rounded-xs text-center px-6 py-2 md:self-start text-white text-lg font-semibold cursor-pointer hover:opacity-70 transition-all duration-200 flex items-center gap-1">
+                        <MdOutlineFileDownload className="text-xl" />
                         <p>Download as PNG</p>
                     </button>
                 </div>
@@ -243,9 +279,73 @@ const IndividualCareerSnapshot = () => {
                 </section>
 
                 {/* Row 3 */}
-                <section>
+                <section className="border border-[#20252C] rounded-[8px] flex flex-col md:flex-row gap-8 p-1">
+                    <div className="profileCardGlassBg w-full md:w-[40%] rounded-[8px] p-6 flex flex-col gap-8 border border-[#2B3438]">
+                        {/* row 1 */}
+                        <div className="flex items-center gap-4">
+                            <img src={profileCardDetails.profileImg} alt={profileCardDetails.login} className="w-16 h-16 border-4 border-secondaryTextColor rounded-xl" />
+                            <div>
+                                <h1 className="text-white text-2xl font-semibold tracking-wider">{profileCardDetails.name}</h1>
+                                <p className="text-secondaryTextColor text-sm tracking-wider">@{profileCardDetails.login}</p>
+                            </div>
+                        </div>
 
+                        {/* row 2 */}
+                        <div className="flex flex-col gap-8">
+                            <div className="">
+                                <p className="text-graySubtextColor uppercase text-[12px] font-bold tracking-wider">Member Experience</p>
+                                <p className="text-white text-3xl font-semibold numbersFont pt-2">{profileCardDetails.githubAge.years} <span className="text-graySubtextColor text-sm font-medium">Years</span></p>
+                            </div>
+                            <div className="">
+                                <p className="text-graySubtextColor uppercase text-[12px] font-bold tracking-wider">Top Technology</p>
+                                <p className="text-white text-3xl font-semibold numbersFont pt-2">{profileCardDetails.topTechnology?.name}</p>
+                            </div>
+                        </div>
+
+                        {/* Row 3 */}
+                        <div className="flex items-center gap-2">
+                            <BsPatchCheck className="text-secondaryTextColor text-xl" />
+                            <p className="text-graySubtextColor uppercase text-xs tracking-wider font-semibold">GITPULSE CERTIFIED ANALYST</p>
+                        </div>
+                    </div>
+                    <div className="flex flex-col w-full justify-between md:w-[60%]">
+                        <div className="grid grid-cols-1 h-full gap-3 md:grid-cols-2 py-6">
+                            {
+                                [
+                                    {
+                                        label: "Total Code Act",
+                                        value: profileCardDetails.totalCodeAct
+                                    },
+                                    {
+                                        label: "Longest Streak",
+                                        value: profileCardDetails.longestStreak
+                                    },
+                                    {
+                                        label: "Member Tier",
+                                        value: profileCardDetails.memberTier
+                                    },
+                                    {
+                                        label: "Oss Merged",
+                                        value: profileCardDetails.ossMerged
+                                    },
+                                ].map((each, idx) => (
+                                    <div key={idx} className="">
+                                        <p className="text-graySubtextColor uppercase text-xs tracking-wider font-semibold">{each.label}</p>
+                                        <p className="text-secondaryTextColor font-semibold text-3xl numbersFont pt-3">{each.value}  <span className="text-graySubtextColor text-[18px] font-medium">{each.label == "Longest Streak" && "days"}</span> </p>
+                                    </div>
+                                ))
+                            }
+                        </div>
+
+                        {/* Wrapped footer */}
+                        <div className="mt-6 border-t border-[#2B3438] flex items-center justify-between py-6">
+                            <p className="text-graySubtextColor font-semibold tracking-wider">&copy;GitPulse</p>
+                        </div>
+                    </div>
                 </section>
+
+
+
             </section>
 
         </main>
