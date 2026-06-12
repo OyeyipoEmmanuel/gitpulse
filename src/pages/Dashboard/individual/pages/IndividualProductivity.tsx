@@ -8,54 +8,7 @@ import ErrorToast from "@/components/ui/error-toast";
 import CompetencyLevelCharts from "../components/CompetencyLevelCharts";
 import type { YoYReview } from "@/types";
 import { MostProductiveDaysChart, HourlyPerformanceChart } from "@/components/charts";
-
-
-export function getCurrentStreak(daysArr: { contributionCount: number, date: string }[]) {
-    if (daysArr.length === 0) return 0
-    let count = 0
-    let i = daysArr.length - 1
-
-    // Skip today if no contributions yet — streak may still be alive
-    if (daysArr[i].contributionCount === 0) i--
-
-    while (i >= 0 && daysArr[i].contributionCount > 0) {
-        count++
-        i--
-    }
-
-    return count
-}
-
-function getLongestStreak(daysArr: { contributionCount: number, date: string }[]) {
-    if (daysArr.length === 0) return { count: 0, from: null, to: null }
-    let max = 0
-    let count = 0
-    let start = 0
-    let bestFrom: string | null = null
-    let bestTo: string | null = null
-
-    for (let i = 0; i < daysArr.length; i++) {
-        if (daysArr[i].contributionCount > 0) {
-            if (count === 0) start = i
-            count++
-        } else {
-            if (count > max) {
-                max = count
-                bestFrom = daysArr[start].date
-                bestTo = daysArr[i - 1].date
-            }
-            count = 0
-        }
-    }
-
-    if (count > max) {
-        max = count
-        bestFrom = daysArr[start].date
-        bestTo = daysArr[daysArr.length - 1].date
-    }
-
-    return { count: max, from: bestFrom, to: bestTo }
-}
+import { getCurrentStreak, getLongestStreak } from "@/lib/streakCalculator";
 
 function formatDate(dateStr: string) {
     return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
@@ -136,6 +89,7 @@ const IndividualProductivity = () => {
 
     // Hourly Performance — aggregate events by hour of day
     const hourTotals = new Array(24).fill(0)
+    console.log(data?.eventsData)
     const events = Array.isArray(data?.eventsData) ? data.eventsData : []
     events.forEach((event: { created_at: string }) => {
         if (event.created_at) {
@@ -212,7 +166,7 @@ const IndividualProductivity = () => {
                 {/* YoY Performance */}
                 <Card className="md:w-[30%] h-fit p-5">
                     <span>
-                        <p className="text-white text-lg">This time last year</p>
+                        <p className="text-white text-lg font-semibold">This time last year</p>
                         <p className="text-xs text-graySubtextColor pt-2">How you compare to the same period last year</p>
                     </span>
 
