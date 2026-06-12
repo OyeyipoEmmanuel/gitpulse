@@ -77,7 +77,7 @@ export const fetchProductivityDatas = async (username: string, token: string) =>
 
     fetchGraphQL(YoY_QUERY, { username, thisYearStart, thisYearEnd, lastYearStart, lastYearEnd }, token),
 
-    fetch(`https://api.github.com/users/${username}/events?per_page=100`, {
+    fetch(`https://api.github.com/users/${username}/events`, {
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/vnd.github+json",
