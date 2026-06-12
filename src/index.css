@@ -40,6 +40,12 @@ body {
   );
 }
 
+.profileCardGlassBg {
+background: radial-gradient(circle at center right, #172524, #161e29dd 100%);
+/* border-radius: 16px; */
+
+}
+
 @theme {
   --color-primaryBg: #0d1117;
   --color-secondaryTextColor: #238636;
