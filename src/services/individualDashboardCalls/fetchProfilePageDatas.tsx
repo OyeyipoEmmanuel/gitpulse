@@ -3,7 +3,7 @@ import { useAuthStore } from "@/store/authStore"
 import { useQuery } from "@tanstack/react-query"
 
 const PROFILE_OVERVIEW_QUERY = `
-  query($username: String!) {
+  query($username: String!, $cursor: String) {
     user(login: $username) {
       name
       login
@@ -29,8 +29,12 @@ const PROFILE_OVERVIEW_QUERY = `
         }
       }
 
-      repositories(first: 100, ownerAffiliations: OWNER) {
+      repositories(first: 100, ownerAffiliations: OWNER, after: $cursor) {
         totalCount
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
         nodes {
           primaryLanguage { name color }
           openPRs: pullRequests(states: OPEN) { totalCount }
@@ -48,7 +52,7 @@ export const fetchProfilePageDatas = async (username: string | null, token: stri
 
   const [graphqlData, starredRepos, recentEvents] = await Promise.all([
     //graphqlfetch
-    fetchGraphQL(PROFILE_OVERVIEW_QUERY, { username }, token),
+    fetchGraphQL(PROFILE_OVERVIEW_QUERY, { username, cursor: null }, token),
 
     //starred repos
     fetch(`${url}/users/${username}/starred?per_page=4`, {
