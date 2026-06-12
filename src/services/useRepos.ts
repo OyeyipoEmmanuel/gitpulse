@@ -82,14 +82,14 @@ export const useRepos = (username: string, token: string | null) => {
 
   const queryKey = useMemo(() => ["repos", username, cursor], [username, cursor])
 
-  const query = useQuery<ReposQueryData | undefined>({
+  const query = useQuery<ReposQueryData>({
     queryKey,
     enabled: !!username && !!token,
-    queryFn: async () => {
+    queryFn: async (): Promise<ReposQueryData> => {
       if (!token) throw new Error("Missing GitHub token")
-      return fetchGraphQL(REPOS_QUERY, { username, cursor }, token)
+      const res = await fetchGraphQL(REPOS_QUERY, { username, cursor }, token)
+      return res as ReposQueryData
     },
-    keepPreviousData: true,
   })
 
   const hasNextPage = query.data?.user?.repositories?.pageInfo?.hasNextPage ?? false
