@@ -12,7 +12,7 @@ const HourlyPerformanceChart = ({ data }: HourlyPerformanceChartProps) => {
         <p className="text-white text-lg font-semibold">Hourly Performance</p>
         <p className="text-xs flex gap-1 text-graySubtextColor pt-2">
           Based on your GitHub activity over the{" "}
-          <span className="text-secondaryTextColor font-extrabold">past 12 months</span>
+          <span className="text-secondaryTextColor font-extrabold">past 90 days</span>
         </p>
       </div>
 
