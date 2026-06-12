@@ -31,7 +31,7 @@ export const useFetchCareerSnapshot = (username: string | null) => {
 
             
 
-            return {userGithubAge: profileData?.graphqlData?.user?.createdAt, reportCard}
+            return {userProfile: profileData?.graphqlData?.user, reportCard}
         }
     })
 }
