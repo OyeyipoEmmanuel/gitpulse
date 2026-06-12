@@ -4,10 +4,14 @@ import { useQuery } from "@tanstack/react-query"
 import type { RepositoryNode, StargazerEdge } from "@/types"
 
 const OVERVIEW_QUERY = `
-query($username: String!, $since: GitTimestamp!) {
+query($username: String!, $since: GitTimestamp!, $cursor: String) {
   user(login: $username) {
-    repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {
+    repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}, after: $cursor) {
       totalCount
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       nodes {
         name
         pushedAt
@@ -59,7 +63,7 @@ export const fetchRepoIntelligenceDatas = async (username: string, token: string
   const since = new Date()
   since.setDate(since.getDate() - 30)
 
-  const overview = await fetchGraphQL(OVERVIEW_QUERY, { username, since: since.toISOString() }, token)
+  const overview = await fetchGraphQL(OVERVIEW_QUERY, { username, since: since.toISOString(), cursor: null }, token)
 
   const repos = overview?.user?.repositories?.nodes?.map((n: RepositoryNode) => n.name)
 
