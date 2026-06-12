@@ -19,9 +19,13 @@ import { fetchProductivityDatas } from "./fetchProductivityDatas"
 
 
 const CODE_QUALITY_QUERY = `
-query($username: String!) {
+query($username: String!, $cursor: String) {
   user(login: $username) {
-    pullRequests(first: 100, states: [MERGED, CLOSED]) {
+    pullRequests(first: 100, states: [MERGED, CLOSED], after: $cursor) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       nodes {
         additions
         deletions
@@ -33,10 +37,14 @@ query($username: String!) {
 }`
 
 const COLLABORATION_QUERY = `
-query($username: String!) {
+query($username: String!, $cursor: String) {
   user(login: $username) {
     contributionsCollection {
-      pullRequestReviewContributions(first: 100) {
+      pullRequestReviewContributions(first: 100, after: $cursor) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
         totalCount
         nodes {
           pullRequest {
@@ -52,9 +60,13 @@ query($username: String!) {
 }`
 
 const OPEN_SOURCE_QUERY = `
-query($username: String!) {
+query($username: String!, $cursor: String) {
   user(login: $username) {
-    pullRequests(first: 100, states: MERGED) {
+    pullRequests(first: 100, states: MERGED, after: $cursor) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       nodes {
         repository {
           name
@@ -85,9 +97,9 @@ export const reportCardDatasFetch = async (username: string | null, token: strin
 
 
   const [codeQuality, collab, openSource] = await Promise.all([
-    fetchGraphQL(CODE_QUALITY_QUERY, { username }, token),
-    fetchGraphQL(COLLABORATION_QUERY, { username }, token),
-    fetchGraphQL(OPEN_SOURCE_QUERY, { username }, token),
+    fetchGraphQL(CODE_QUALITY_QUERY, { username, cursor: null }, token),
+    fetchGraphQL(COLLABORATION_QUERY, { username, cursor: null }, token),
+    fetchGraphQL(OPEN_SOURCE_QUERY, { username, cursor: null }, token),
 
   ])
 
