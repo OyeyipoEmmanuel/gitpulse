@@ -5,7 +5,9 @@ import { useFetchReportCardDatas } from "@/services/individualDashboardCalls/fet
 import type { CodeQualityNode, CollaborationQuery, OpenSourceNode, ReportCardDimesions, RepositoryNode } from "@/types"
 import { useParams } from "react-router-dom"
 import Card from "../components/Card"
-import { calculateConsistencyScore, getCurrentStreak } from "./IndividualProductivity"
+import { calculateConsistencyScore } from "./IndividualProductivity"
+import { getCurrentStreak } from "@/lib/streakCalculator"
+
 
 function codeQualityFunc(data: CodeQualityNode[], repos: RepositoryNode[]): ReportCardDimesions {
     // Avg pr size
