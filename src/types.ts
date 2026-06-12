@@ -164,10 +164,38 @@ export interface OpenSourceNode {
 export interface TotalContributionObjectType {
   user: {
     [year: string]: {
-      contributionCalender:{
+      contributionCalendar: {
         totalContribution: number
+        weeks?: Array<{
+          contributionDays: Array<{
+            date: string
+            contributionCount: number
+          }>
+        }>
       }
     }
   }
+}
+
+export interface GithubAge {
+  years: number
+  months: number
+}
+
+export interface Language {
+  name: string
+  color: string
+}
+
+export interface ProfileCardDetails {
+  profileImg: string | undefined
+  name: string | undefined
+  login: string | undefined
+  githubAge: GithubAge
+  topTechnology: Language | undefined
+  totalCodeAct: number
+  ossMerged: number | string
+  longestStreak: number
+  memberTier: "Veteran" | "Established" | "Rising"
 }
 
