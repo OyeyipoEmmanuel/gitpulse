@@ -4,7 +4,7 @@ import { fetchGraphQL } from "@/lib/github"
 import { useFetchCareerSnapshot } from "@/services/individualDashboardCalls/fetchCareerSnapshotDatas"
 import { useAuthStore } from "@/store/authStore"
 import type { RepositoryNode, TotalContributionObjectType, ProfileCardDetails } from "@/types"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
 import { openSourceFunc } from "./IndividualReportCard"
 import Card from "../components/Card"
@@ -14,6 +14,7 @@ import { GrLineChart } from "react-icons/gr";
 import { IoStarSharp } from "react-icons/io5";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { BsPatchCheck } from "react-icons/bs";
+import { toPng } from "html-to-image";
 
 
 
@@ -114,8 +115,56 @@ function getLanguageMastered(repoNodes: RepositoryNode[]) {
     return res
 }
 
+const DESKTOP_WIDTH = 1440
+
 const IndividualCareerSnapshot = () => {
     const [totalContributionObject, setTotalContributionObject] = useState<TotalContributionObjectType | null>(null)
+    const [isDownloading, setIsDownloading] = useState(false)
+    const contentRef = useRef<HTMLElement>(null)
+
+    const downloadAsPng = async () => {
+        const source = contentRef.current
+        if (!source) return
+
+        setIsDownloading(true)
+
+        try {
+            const wrapper = document.createElement("div")
+            wrapper.style.position = "fixed"
+            wrapper.style.top = "-99999px"
+            wrapper.style.left = "-99999px"
+            wrapper.style.width = `${DESKTOP_WIDTH}px`
+            wrapper.style.overflow = "hidden"
+            wrapper.style.zIndex = "-1"
+
+            const clone = source.cloneNode(true) as HTMLElement
+            clone.style.width = `${DESKTOP_WIDTH}px`
+            clone.style.minHeight = "auto"
+            clone.style.transform = "none"
+
+            wrapper.appendChild(clone)
+            document.body.appendChild(wrapper)
+
+            const dataUrl = await toPng(clone, {
+                width: DESKTOP_WIDTH,
+                style: {
+                    width: `${DESKTOP_WIDTH}px`,
+                    transform: "none",
+                }
+            })
+
+            document.body.removeChild(wrapper)
+
+            const link = document.createElement("a")
+            link.download = "gitpulse-career-snapshot.png"
+            link.href = dataUrl
+            link.click()
+        } catch (err) {
+            console.error("Failed to download snapshot:", err)
+        } finally {
+            setIsDownloading(false)
+        }
+    }
 
     const params = useParams()
     const { getToken, loading } = useAuthStore()
@@ -200,13 +249,17 @@ const IndividualCareerSnapshot = () => {
 
 
     return (
-        <main className="fullPageGradientBg min-h-screen">
+        <main ref={contentRef} className="fullPageGradientBg min-h-screen">
             <section className="py-4 px-4 flex flex-col gap-12">
                 <div className="flex flex-col justify-between md:flex-row">
                     <p className="text-graySubtextColor">A high-fidelity analysis of your engineering journey on Github.</p>
-                    <button className="w-fit self-end tracking-tight bg-[#248637] rounded-xs text-center px-6 py-2 md:self-start text-white text-lg font-semibold cursor-pointer hover:opacity-70 transition-all duration-200 flex items-center gap-1">
-                        <MdOutlineFileDownload className="text-xl" />
-                        <p>Download as PNG</p>
+                    <button
+                        onClick={downloadAsPng}
+                        disabled={isDownloading}
+                        className="w-fit self-end tracking-tight bg-[#248637] rounded-xs text-center px-6 py-2 md:self-start text-white text-lg font-semibold cursor-pointer hover:opacity-70 transition-all duration-200 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <MdOutlineFileDownload className={`text-xl ${isDownloading ? "animate-spin" : ""}`} />
+                        <p>{isDownloading ? "Generating..." : "Download as PNG"}</p>
                     </button>
                 </div>
 
