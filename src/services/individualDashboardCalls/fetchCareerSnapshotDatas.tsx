@@ -28,9 +28,6 @@ export const useFetchCareerSnapshot = (username: string | null) => {
                 }),
             ])
 
-
-            
-
             return {userProfile: profileData?.graphqlData?.user, reportCard}
         }
     })

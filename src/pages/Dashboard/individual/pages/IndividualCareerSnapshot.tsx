@@ -18,8 +18,6 @@ import { toPng } from "html-to-image";
 
 
 
-
-
 async function getAllTimeContributionCount(
     dateCreated: string,
     username: string,
@@ -396,11 +394,7 @@ const IndividualCareerSnapshot = () => {
                         </div>
                     </div>
                 </section>
-
-
-
             </section>
-
         </main>
     )
 }
