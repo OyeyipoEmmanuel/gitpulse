@@ -1,4 +1,5 @@
-import { CircleCheckBig, CreditCard, LogIn } from "lucide-react"
+import { CircleCheckBig, CreditCard } from "lucide-react"
+import GitHubSignInButton from "@/components/auth/GitHubSignInButton"
 import { type PricingData } from "../../../types"
 import Button from "./Button"
 
@@ -45,7 +46,7 @@ const PriceCard = () => {
                         {
                             data.price == 0 ?
                                 // if Free, login
-                                <Button label="Login with Github" icon={<LogIn color="#ffffff" strokeWidth={1.25} />} bgColor="#238636" textColor="#ffffff" />
+                                <GitHubSignInButton />
                                 :
                                 <Button label="Checkout Now" icon={<CreditCard color="#ffffff" strokeWidth={1.25} />} bgColor="#30363D" textColor="#ffffff" />
                         }
