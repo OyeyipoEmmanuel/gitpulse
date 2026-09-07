@@ -1,0 +1,17 @@
+import { lazy } from "react"
+
+export const LandingPage = lazy(() => import("../pages/LandingPage/LandingPage"))
+export const AuthCallback = lazy(() => import("../pages/auth/AuthCallback"))
+export const Dashboard = lazy(() => import("../pages/Dashboard/Dashboard"))
+export const SelectAcount = lazy(() => import("../pages/SelectAccount/SelectAcount"))
+export const IndividualDashboard = lazy(() => import("@/pages/Dashboard/individual/IndividualDashboard"))
+export const OrganizationDashboard = lazy(() => import("@/pages/Dashboard/organization/OrganizationDashboard"))
+export const IndividualProfile = lazy(() => import("@/pages/Dashboard/individual/pages/IndividualProfile"))
+export const IndividualRepoIntelligence = lazy(() => import("@/pages/Dashboard/individual/pages/IndividualRepoIntelligence"))
+export const IndividualProductivity = lazy(() => import("@/pages/Dashboard/individual/pages/IndividualProductivity"))
+export const IndividualReportCard = lazy(() => import("@/pages/Dashboard/individual/pages/IndividualReportCard"))
+export const IndividualCareerSnapshot = lazy(() => import("@/pages/Dashboard/individual/pages/IndividualCareerSnapshot"))
+export const AskBob = lazy(() => import("@/pages/Dashboard/individual/pages/AskBob"))
+export const OrganizationComingSoon = lazy(() => import("@/pages/Dashboard/organization/pages/OrganizationComingSoon"))
+export const NotFoundPage = lazy(() => import("@/pages/status/NotFoundPage"))
+export const RouteErrorPage = lazy(() => import("@/pages/status/RouteErrorPage"))
