@@ -1,5 +1,6 @@
 import { useAuthStore } from "@/store/authStore"
 import { useQuery } from "@tanstack/react-query"
+import { githubFetch } from "@/lib/githubFetch"
 
 
 
@@ -20,7 +21,7 @@ export const useFetchOrgProfilePageData = (orgname: string) => {
 
             const [orgProfile] = await Promise.all([
                 //profile fetch
-                fetch(`${url}/orgs/${orgname}`, {
+                githubFetch(`${url}/orgs/${orgname}`, token, {
                     headers: {Authorization: `Bearer ${token}`}
                 })
             ])
