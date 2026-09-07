@@ -1,6 +1,6 @@
 import { supabase } from "./supabase"
 
-export const saveProviderToken = async (userId: string, token: string) => {
+export const saveProviderToken = async (userId: string, token: string, signal: AbortSignal) => {
     const { error } = await supabase
         .from("user_tokens")
         .upsert({ 
@@ -9,18 +9,19 @@ export const saveProviderToken = async (userId: string, token: string) => {
             updated_at: new Date().toISOString()
         }, { 
             onConflict: "user_id" 
-        })
+        }).abortSignal(signal)
 
-    if (error) console.error("Failed to save token:", error.message)
+    if (error) throw new Error("Your GitHub connection could not be saved. You may need to reconnect after reloading.")
 }
 
-export const getProviderToken = async (userId: string) => {
+export const getProviderToken = async (userId: string, signal: AbortSignal) => {
     const { data, error } = await supabase
         .from("user_tokens")
         .select("github_access_token")
         .eq("user_id", userId)
-        .single()
+        .abortSignal(signal)
+        .maybeSingle()
 
-    if (error) return null
+    if (error) throw new Error("Your saved GitHub connection could not be loaded. Please try again.")
     return data?.github_access_token ?? null
 }
