@@ -4,12 +4,12 @@ export const signInWithGithub = async()=>{
     const {error} = await supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
-            redirectTo: `${import.meta.env.VITE_APP_URL}/auth/callback`,
-            scopes: "read:user user:email public_repo read:org"
+            redirectTo: new URL("/auth/callback", import.meta.env.VITE_APP_URL || window.location.origin).href,
+            scopes: "read:user user:email read:org"
         }
     })
 
     if(error){
-        console.error("Error: " + error.message)
+        throw new Error("GitHub sign-in could not be started. Please try again.")
     }
 }
