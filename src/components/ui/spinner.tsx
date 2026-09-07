@@ -1,9 +1,9 @@
 // components/ui/spinner.tsx
 import { cn } from "@/lib/utils"
 
-export function LoadingSpinner({ className }: { className?: string }) {
+export function LoadingSpinner({ className, label = "Loading" }: { className?: string; label?: string }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/5 backdrop-blur-xs">
+    <div role="status" aria-live="polite" aria-label={label} className="fixed inset-0 z-50 flex items-center justify-center bg-[#0D1117]/70 backdrop-blur-xs">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -27,6 +27,7 @@ export function LoadingSpinner({ className }: { className?: string }) {
           <animate begin="spinner_XR07.begin+0.8s" attributeName="opacity" calcMode="spline" dur="1.2s" values="1;0" keySplines=".52,.6,.25,.99"/>
         </path>
       </svg>
+      <span className="sr-only">{label}</span>
     </div>
   )
 }
