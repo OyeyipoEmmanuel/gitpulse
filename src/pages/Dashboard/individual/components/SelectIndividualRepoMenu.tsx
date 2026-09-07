@@ -28,7 +28,6 @@ const SelectRepoMenu = () => {
     
 
     const { data, isPending, error } = useFetchIndividualRepos(param.username ?? "", "users")
-if(isPending) console.log("Pend")
     return (
         <div className="">
             <DropdownMenu>
@@ -41,7 +40,7 @@ if(isPending) console.log("Pend")
                         ) : (
                             <div className="flex items-center gap-4">
                                 {selected.avatar && (
-                                    <img src={selected.avatar} className="rounded-sm" width={32} height={32} />
+                                    <img src={selected.avatar} alt="" className="rounded-sm" width={32} height={32} />
                                 )}
                                 <span className="flex flex-col text-start gap-y-2">
                                     <p className="text-white capitalize font-semibold ">{selected.name}</p>
@@ -57,7 +56,7 @@ if(isPending) console.log("Pend")
                     <DropdownMenuRadioGroup
                         value={selected.name}
                         onValueChange={(name) => {
-                            const repo = data.find((r: GithubRepo) => r.name === name)
+                            const repo = data?.find((r: GithubRepo) => r.name === name)
 
                             if (repo) setSelected({
                                 name: repo.name,
