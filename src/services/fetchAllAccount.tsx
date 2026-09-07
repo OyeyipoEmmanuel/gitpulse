@@ -2,41 +2,33 @@
 
 import { useQuery } from "@tanstack/react-query"
 import { useAuthStore } from "../store/authStore"
+import { githubAllPages, githubJson } from "../lib/githubFetch"
+import { GitHubReconnectError } from "../lib/authErrors"
+import type { GithubOrg } from "../types"
+
+interface GithubAccount {
+    login: string
+    name: string | null
+    bio: string | null
+    avatar_url: string
+}
 
 export const useGetAccountsToDisplay = () => {
-    const { loading, providerToken, getToken } = useAuthStore();
+    const { loading, user, getToken } = useAuthStore();
     const url = import.meta.env.VITE_GITHUB_API_URL
 
     return useQuery({
-        queryKey: ['fetch_all_accounts'],
-        enabled: !loading && !!providerToken,
-        retry: 2,
-        staleTime: 1000 * 60 * 5, // 5 mins
-        gcTime: 1000 * 60 * 10,
+        queryKey: ['fetch_all_accounts', user?.id],
+        enabled: !loading && !!user,
         queryFn: async () => {
             const token = await getToken()
+            if (!token) throw new GitHubReconnectError()
 
-            const [userRes, orgRes] = await Promise.all([
-                fetch(`${url}/user`,
-                    {
-                        headers: { Authorization: `Bearer ${token}` }
-                    }
-                ),
-                fetch(`${url}/user/orgs`,
-                    {
-                        headers: { Authorization: `Bearer ${token}` }
-                    }
-                ),
+            const [account, orgs] = await Promise.all([
+                githubJson<GithubAccount>(`${url}/user`, token),
+                githubAllPages<GithubOrg>(`${url}/user/orgs?per_page=100`, token),
             ])
-
-            if (!userRes.ok) throw new Error(userRes.statusText)
-            if (!orgRes.ok) throw new Error(orgRes.statusText)
-
-
-            const user = await userRes.json()
-            const orgs = await orgRes.json()
-
-            return { user, orgs }
+            return { user: account, orgs }
         }
     })
 
