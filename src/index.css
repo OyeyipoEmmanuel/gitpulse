@@ -1,11 +1,10 @@
-@import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap");
+@import "@fontsource-variable/geist";
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -15,6 +14,12 @@ body {
   font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+a,
+[role="button"] {
+  @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4ADE80];
 }
 
 .numbersFont {
@@ -50,10 +55,6 @@ background: radial-gradient(circle at center right, #172524, #161e29dd 100%);
   --color-primaryBg: #0d1117;
   --color-secondaryTextColor: #238636;
   --color-graySubtextColor: #8b949e;
-}
-.recharts-wrapper *:focus,
-.recharts-wrapper *:focus-visible {
-  outline: none !important;
 }
 @theme inline {
   --font-heading: var(--font-sans);
