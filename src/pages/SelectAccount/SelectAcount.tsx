@@ -4,13 +4,14 @@ import ErrorToast from "@/components/ui/error-toast"
 import { useGetAccountsToDisplay } from "../../services/fetchAllAccount"
 import { useNavigate } from "react-router-dom"
 import type { GithubOrg } from "@/types"
+import SignOutButton from "@/components/auth/SignOutButton"
 
 
 const SelectAcount = () => {
     const navigate = useNavigate()
 
     //Fetch accounts
-    const { isPending, error, data } = useGetAccountsToDisplay()
+    const { isPending, error, data, refetch } = useGetAccountsToDisplay()
 
     if (isPending) return (
         <div className="w-screen h-screen bg-primaryBg">
@@ -18,7 +19,7 @@ const SelectAcount = () => {
         </div>
     )
 
-    if (error) return <ErrorToast message={error.message} />
+    if (error) return <ErrorToast message={error.message} onRetry={() => void refetch()} />
 
     return (
         <main className="bg-primaryBg w-full">
@@ -29,16 +30,17 @@ const SelectAcount = () => {
 
                     <h1 className="font-semibold text-xl md:text-3xl">Select account</h1>
                     <p className="text-graySubtextColor">Choose an account to view analytics for</p>
+                    <SignOutButton />
                 </div>
 
                 <section className="grid grid-cols-1 gap-3">
 
                     {/* For User */}
                     {data.user && (
-                        <div className="bg-[#161B22] border border-[#2A2F36] rounded-md p-3 flex flex-row justify-between items-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer" onClick={() => navigate(`/dashboard/personal/${data.user.login}/profile`)}>
+                        <button type="button" className="w-full text-left bg-[#161B22] border border-[#2A2F36] rounded-md p-3 flex flex-row justify-between items-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer" onClick={() => navigate(`/dashboard/personal/${data.user.login}/profile`)}>
                             <div className="flex space-x-3 items-center md:space-x-6">
                                 {/* img */}
-                                <img src={data.user.avatar_url} alt={`${data.user.name}`} className="rounded-xl" width={48} height={48} loading="lazy" />
+                                <img src={data.user.avatar_url} alt={`${data.user.name ?? data.user.login}`} className="rounded-xl" width={48} height={48} loading="lazy" />
                                 {/* name */}
                                 <span className="space-y-2">
                                     <h1 className="font-semibold md:text-xl">{data.user.name}</h1>
@@ -49,16 +51,16 @@ const SelectAcount = () => {
                             <div className="capitalize bg-[#30363D] rounded-full px-3 py-0.5 h-fit text-[#4ADE80] font-semibold text-xs md:text-md">
                                 <p>Personal</p>
                             </div>
-                        </div>
+                        </button>
                     )}
 
                     {/* For Organizations */}
-                    {data.orgs && data.orgs.map((each: GithubOrg, idx: number) => (
-                        <div className="relative">
-                            <button key={idx} className="w-full bg-[#161B22] border border-[#2A2F36] rounded-md p-3 flex flex-row justify-between items-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer disabled:opacity-20" onClick={() => alert("Coming Soon")} disabled>
+                    {data.orgs && data.orgs.map((each: GithubOrg) => (
+                        <div className="relative" key={each.login}>
+                            <button type="button" className="w-full bg-[#161B22] border border-[#2A2F36] rounded-md p-3 flex flex-row justify-between items-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer disabled:opacity-20" disabled>
                                 <div className="flex space-x-3 items-center md:space-x-6 w-[80%]">
                                     {/* img */}
-                                    <img src={each.avatar_url} alt={`${each.name}`} className="rounded-xl" width={48} height={48} />
+                                    <img src={each.avatar_url} alt={`${each.name ?? each.login}`} className="rounded-xl" width={48} height={48} />
                                     {/* name */}
                                     <span className="space-y-2">
                                         <h1 className="font-semibold md:text-xl capitalize">{each.login}</h1>
