@@ -7,6 +7,7 @@ interface MostProductiveDaysChartProps {
 
 const MostProductiveDaysChart = ({ data }: MostProductiveDaysChartProps) => {
   const maxContributions = Math.max(...data.map(d => d.contributions))
+  const summary = data.map(item => `${item.day}: ${item.contributions}`).join(", ")
 
   return (
     <Card className="p-5 flex flex-col gap-4 w-full">
@@ -18,6 +19,7 @@ const MostProductiveDaysChart = ({ data }: MostProductiveDaysChartProps) => {
         </p>
       </div>
 
+      <div role="img" aria-label={`Contributions by weekday. ${summary}`} className="w-full">
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} margin={{ left: -20, bottom: 0 }}>
           <XAxis
@@ -54,6 +56,7 @@ const MostProductiveDaysChart = ({ data }: MostProductiveDaysChartProps) => {
           </Bar>
         </BarChart>
       </ResponsiveContainer>
+      </div>
     </Card>
   )
 }
