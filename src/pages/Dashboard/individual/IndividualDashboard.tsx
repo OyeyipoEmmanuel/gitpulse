@@ -1,28 +1,19 @@
 
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import DashboardTopNav from '@/components/navbars/DashboardTopNav'
 import IndividualSideNav from './components/IndividualSideNav'
 import { Outlet } from 'react-router-dom'
-import { useAuthStore } from '@/store/authStore'
-import { useRepos } from '@/services/useRepos'
 
 const IndividualDashboard = () => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
-  const [token, setToken] = useState<string | null>(null)
-  const params = useParams()
-  const { getToken, loading } = useAuthStore()
-  const username = params.username ?? ''
-
   useEffect(() => {
-    if (!loading) {
-      getToken().then((value) => {
-        setToken(value)
-      })
+    if (!mobileNavOpen) return
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileNavOpen(false)
     }
-  }, [getToken, loading])
-
-  const { hasNextPage, hasPreviousPage, goToNextPage, goToPreviousPage } = useRepos(username, token)
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [mobileNavOpen])
 
   return (
     <main className='flex flex-row w-full'>
@@ -34,13 +25,9 @@ const IndividualDashboard = () => {
         onClose={() => setMobileNavOpen(false)}
       />
 
-      <section className='md:w-[calc(100%-256px)] w-full'>
+      <section inert={mobileNavOpen ? true : undefined} className='md:w-[calc(100%-256px)] w-full'>
         <DashboardTopNav
           onMenuToggle={() => setMobileNavOpen((prev) => !prev)}
-          onPrevPage={goToPreviousPage}
-          onNextPage={goToNextPage}
-          hasPreviousPage={hasPreviousPage}
-          hasNextPage={hasNextPage}
         />
 
         {/* Pages */}
