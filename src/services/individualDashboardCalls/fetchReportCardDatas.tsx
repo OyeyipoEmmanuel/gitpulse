@@ -1,8 +1,10 @@
-import { fetchGraphQL } from "@/lib/github"
+import { fetchGraphQL, fetchGraphQLConnection, type GraphQLConnection } from "@/lib/github"
+import { GitHubDataError } from "@/lib/githubErrors"
 import { useAuthStore } from "@/store/authStore"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query"
 import { fetchRepoIntelligenceDatas } from "./fetchRepoIntelligenceData"
 import { fetchProductivityDatas } from "./fetchProductivityDatas"
+import type { CodeQualityNode, OpenSourceNode } from "@/types"
 
 //Get this time last year date
 // const today = new Date()
@@ -37,23 +39,11 @@ query($username: String!, $cursor: String) {
 }`
 
 const COLLABORATION_QUERY = `
-query($username: String!, $cursor: String) {
+query($username: String!) {
   user(login: $username) {
     contributionsCollection {
-      pullRequestReviewContributions(first: 100, after: $cursor) {
-        pageInfo {
-          hasNextPage
-          endCursor
-        }
+      pullRequestReviewContributions {
         totalCount
-        nodes {
-          pullRequest {
-            createdAt
-            comments { totalCount }
-            reviews { totalCount }
-          }
-          occurredAt
-        }
       }
     }
   }
@@ -80,28 +70,42 @@ query($username: String!, $cursor: String) {
   }
 }`
 
-export const reportCardDatasFetch = async (username: string | null, token: string, queryClient: any) => {
+export const reportCardDatasFetch = async (username: string | null, token: string, queryClient: QueryClient) => {
 
   const [repoData, productivityData] = await Promise.all([
     queryClient.fetchQuery({
       queryKey: ['fetch_repo_intelligence_datas', username],
       queryFn: () => fetchRepoIntelligenceDatas(username!, token),
-      staleTime: Infinity,
     }),
     queryClient.fetchQuery({
       queryKey: ['fetch_productivity_datas', username],
       queryFn: () => fetchProductivityDatas(username!, token),
-      staleTime: Infinity,
     }),
   ])
 
 
-  const [codeQuality, collab, openSource] = await Promise.all([
-    fetchGraphQL(CODE_QUALITY_QUERY, { username, cursor: null }, token),
-    fetchGraphQL(COLLABORATION_QUERY, { username, cursor: null }, token),
-    fetchGraphQL(OPEN_SOURCE_QUERY, { username, cursor: null }, token),
+  type CodeData = { user: null | { pullRequests: GraphQLConnection<CodeQualityNode> } }
+  type CollabData = { user: null | { contributionsCollection: { pullRequestReviewContributions: { totalCount: number } } } }
+  type OpenSourceData = { user: null | { pullRequests: GraphQLConnection<OpenSourceNode> } }
 
+  const [codeResult, collabResponse, openSourceResult] = await Promise.all([
+    fetchGraphQLConnection<CodeData, CodeQualityNode>(CODE_QUALITY_QUERY, { username }, token, data => data.user?.pullRequests),
+    fetchGraphQL<CollabData>(COLLABORATION_QUERY, { username }, token),
+    fetchGraphQLConnection<OpenSourceData, OpenSourceNode>(OPEN_SOURCE_QUERY, { username }, token, data => data.user?.pullRequests),
   ])
+
+  const firstCodeUser = codeResult.firstPage.user
+  const firstOpenSourceUser = openSourceResult.firstPage.user
+  if (!firstCodeUser || !collabResponse.user || !firstOpenSourceUser) {
+    throw new GitHubDataError("The requested GitHub user could not be found.")
+  }
+  const codeQuality = {
+    user: { ...firstCodeUser, pullRequests: { ...firstCodeUser.pullRequests, nodes: codeResult.nodes } },
+  }
+  const openSource = {
+    user: { ...firstOpenSourceUser, pullRequests: { ...firstOpenSourceUser.pullRequests, nodes: openSourceResult.nodes } },
+  }
+  const collab = { user: collabResponse.user }
 
   return { repoData, productivityData, codeQuality, collab, openSource }
 }
