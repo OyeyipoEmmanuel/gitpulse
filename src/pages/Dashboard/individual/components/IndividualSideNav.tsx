@@ -1,7 +1,8 @@
 import Logo from "@/components/ui/Logo"
 import { navContent } from "../datas"
 import { NavLink } from "react-router-dom"
-import { LogOut, X } from "lucide-react"
+import { X } from "lucide-react"
+import SignOutButton from "@/components/auth/SignOutButton"
 
 interface IndividualSideNavProps {
   isOpen?: boolean
@@ -15,8 +16,8 @@ const NavLinks = ({ onClose }: { onClose?: () => void }) => (
         <Logo textSize={22} />
       </div>
       <ul className="flex flex-col space-y-5 md:space-y-8 p-6 border-t border-[#23282E]">
-        {navContent.map((each, idx) => (
-          <li key={idx}>
+        {navContent.map((each) => (
+          <li key={each.path}>
             <NavLink
               to={each.path}
               onClick={onClose}
@@ -39,8 +40,7 @@ const NavLinks = ({ onClose }: { onClose?: () => void }) => (
     </section>
 
     <section className="border-t border-[#2D3239] p-6 flex items-center space-x-4">
-      <LogOut size={20} color="#94A3B8" strokeWidth={1} />
-      <p className="text-[#94A388]">Logout</p>
+      <SignOutButton />
     </section>
   </>
 )
@@ -54,19 +54,23 @@ const IndividualSideNav = ({ isOpen = false, onClose }: IndividualSideNavProps) 
       </nav>
 
       {/* Mobile drawer backdrop */}
-      <div
+      <button type="button" aria-label="Close dashboard menu" tabIndex={isOpen ? 0 : -1}
         className={`fixed inset-0 z-40 bg-black/50 md:hidden transition-opacity duration-300 ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
         onClick={onClose}
       />
 
       {/* Mobile drawer */}
       <nav
+        inert={!isOpen ? true : undefined}
+        aria-label="Personal dashboard"
+        aria-hidden={!isOpen}
         className={`fixed inset-y-0 left-0 z-50 w-[80%] bg-[#161B22] flex flex-col justify-between border-r border-[#2D3239] md:hidden
           transition-transform duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         {/* Close button */}
         <button
+          type="button"
           onClick={onClose}
           className="absolute top-4 right-4 text-[#94A3B8] hover:text-white transition-colors"
           aria-label="Close menu"
