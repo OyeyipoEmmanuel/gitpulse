@@ -38,9 +38,9 @@ function getMostUsedLang(arrOfLanguages: string[]) {
 const IndividualRepoIntelligence = () => {
   const params = useParams()
 
-  const { data, isPending, error } = useFetchRepoIntelligenceDatas(params.username ?? null)
+  const { data, isPending, error, refetch } = useFetchRepoIntelligenceDatas(params.username ?? null)
 
-  if (error) return <ErrorToast message={error.message} />
+  if (error) return <ErrorToast message={error.message} onRetry={() => void refetch()} />
   if (isPending) return (<LoadingSpinner className="text-green-500 w-32 h-32" />)
 
   const overview = data?.overview?.user?.repositories
@@ -57,8 +57,6 @@ const IndividualRepoIntelligence = () => {
   const totalFork = overview?.nodes?.reduce((acc: number, r: RepositoryNode) =>
     acc + (r.forkCount ?? 0), 0
   )
-
-  console.log(data)
 
   // get most used Language
   const arr: string[] = []
@@ -78,22 +76,21 @@ const IndividualRepoIntelligence = () => {
   const date = new Date()
   date.setDate(date.getDate() - 30)
   const thirtyDaysAgo = date.toISOString()
-  console.log(thirtyDaysAgo)
-
   //filter array with last 30days updated fiel
   const activeRepos = overview?.nodes
     ?.filter((node: RepositoryNode) => thirtyDaysAgo <= node.updatedAt)
-    ?.map((node: RepositoryNode) => ({ name: node.name, totalCount: node.defaultBranchRef?.target?.history?.totalCount }))
+    ?.map((node: RepositoryNode) => ({ name: node.name, totalCount: node.defaultBranchRef?.target?.history?.totalCount ?? 0 })) ?? []
 
 
   // Get Dead repos
   //Get 6months(30*6=180) before now
-  date.setDate(date.getDate() - 180)
-  const sixMonthBefore = date.toISOString()
+  const sixMonthsAgo = new Date()
+  sixMonthsAgo.setDate(sixMonthsAgo.getDate() - 180)
+  const sixMonthBefore = sixMonthsAgo.toISOString()
 
   const deadRepos = overview?.nodes
     ?.filter((node: RepositoryNode) => sixMonthBefore >= node.updatedAt)
-    ?.map((node: RepositoryNode) => ({ name: node.name, updatedAt: node.updatedAt, diskUsage: node.diskUsage ?? 0 }))
+    ?.map((node: RepositoryNode) => ({ name: node.name, updatedAt: node.updatedAt, diskUsage: node.diskUsage ?? 0 })) ?? []
 
 
   return (
@@ -142,7 +139,7 @@ const IndividualRepoIntelligence = () => {
          <Card className="w-full p-5" >
           <div>
             <h1 className="text-white font-semibold text-lg">Star Velocity</h1>
-            <p className="text-graySubtextColor text-xs pt-1">How fast your repos are being discovered</p>
+            <p className="text-graySubtextColor text-xs pt-1">New stars received across your repositories in the last 30 days</p>
           </div>
 
           <StarsGrowthAreaChart data={data?.starsByDay}/>
