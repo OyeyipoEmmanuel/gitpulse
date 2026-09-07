@@ -87,8 +87,7 @@ export const useRepos = (username: string, token: string | null) => {
     enabled: !!username && !!token,
     queryFn: async (): Promise<ReposQueryData> => {
       if (!token) throw new Error("Missing GitHub token")
-      const res = await fetchGraphQL(REPOS_QUERY, { username, cursor }, token)
-      return res as ReposQueryData
+      return fetchGraphQL<ReposQueryData>(REPOS_QUERY, { username, cursor }, token)
     },
   })
 
