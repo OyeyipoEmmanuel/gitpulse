@@ -1,7 +1,7 @@
 import type { AuthChangeEvent, Session, User } from "@supabase/supabase-js"
 import { create } from "zustand"
 import { supabase } from "../lib/supabase"
-import { saveProviderToken, getProviderToken } from "../lib/tokenStore"
+import { saveProviderToken, getProviderToken, TokenPersistenceError } from "../lib/tokenStore"
 import { validateGithubToken } from "../lib/validateGithubToken"
 import { GitHubReconnectError } from "../lib/authErrors"
 import { queryClient } from "../lib/queryClient"
@@ -16,10 +16,13 @@ interface AuthState {
   authError: string | null
   tokenError: string | null
   tokenWarning: string | null
+  savingToken: boolean
   revision: number
   initialize: () => () => void
   getToken: () => Promise<string | null>
   retryTokenRecovery: () => Promise<void>
+  retryTokenPersistence: () => Promise<void>
+  dismissTokenWarning: () => void
   invalidateProviderToken: (token: string) => void
   signOut: () => Promise<void>
 }
@@ -52,7 +55,7 @@ export function createAuthStore() {
         set({
           session, user: session?.user ?? null, providerToken: null,
           tokenStatus: session ? "loading" : "idle", loading: false, signingOut: false,
-          authError: null, tokenError: null, tokenWarning: null, revision: generation,
+          authError: null, tokenError: null, tokenWarning: null, savingToken: false, revision: generation,
         })
         queryClient.clear()
       } else {
@@ -71,6 +74,7 @@ export function createAuthStore() {
       user: null, session: null, providerToken: null, tokenStatus: "idle",
       loading: true, signingOut: false, authError: null, tokenError: null,
       tokenWarning: null, revision: 0,
+      savingToken: false,
 
       initialize: () => {
         let active = true
@@ -126,8 +130,20 @@ export function createAuthStore() {
             if (signal.aborted) throw new Error("Token recovery timed out")
             let warning: string | null = null
             if (candidate) {
-              try { await saveProviderToken(user.id, token, signal) }
-              catch { warning = "Your GitHub connection could not be saved. You may need to reconnect after reloading." }
+              const saveSignal = AbortSignal.any([controller.signal, AbortSignal.timeout(10000)])
+              try { await saveProviderToken(user.id, token, saveSignal) }
+              catch (error) {
+                const reference = error instanceof TokenPersistenceError && error.code ? ` (Reference: ${error.code})` : ""
+                warning = `Your GitHub connection could not be saved. You may need to reconnect after reloading.${reference}`
+                if (import.meta.env.DEV && error instanceof TokenPersistenceError) {
+                  console.error("GitHub token persistence failed", {
+                    code: error.code,
+                    message: error.databaseMessage,
+                    details: error.details,
+                    hint: error.hint,
+                  })
+                }
+              }
             }
             if (current !== generation) return null
             pendingProviderToken = null
@@ -157,12 +173,40 @@ export function createAuthStore() {
         await get().getToken()
       },
 
+      retryTokenPersistence: async () => {
+        const { user, providerToken, tokenStatus, signingOut } = get()
+        if (!user || !providerToken || tokenStatus !== "ready" || signingOut || get().savingToken) return
+        const current = generation
+        const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(10000)])
+        set({ savingToken: true })
+        try {
+          await saveProviderToken(user.id, providerToken, signal)
+          if (current === generation) set({ tokenWarning: null })
+        } catch (error) {
+          if (current !== generation) return
+          const reference = error instanceof TokenPersistenceError && error.code ? ` (Reference: ${error.code})` : ""
+          set({ tokenWarning: `Your GitHub connection could not be saved. You may need to reconnect after reloading.${reference}` })
+          if (import.meta.env.DEV && error instanceof TokenPersistenceError) {
+            console.error("GitHub token persistence retry failed", {
+              code: error.code,
+              message: error.databaseMessage,
+              details: error.details,
+              hint: error.hint,
+            })
+          }
+        } finally {
+          if (current === generation) set({ savingToken: false })
+        }
+      },
+
+      dismissTokenWarning: () => set({ tokenWarning: null }),
+
       invalidateProviderToken: (token) => {
         if (get().providerToken !== token) return
         resetRequests()
         rejectedToken = token
         pendingProviderToken = null
-        set({ providerToken: null, tokenStatus: "reconnect", tokenError: new GitHubReconnectError().message, tokenWarning: null, revision: generation })
+        set({ providerToken: null, tokenStatus: "reconnect", tokenError: new GitHubReconnectError().message, tokenWarning: null, savingToken: false, revision: generation })
         queryClient.clear()
       },
 
@@ -171,7 +215,7 @@ export function createAuthStore() {
         resetRequests()
         const current = generation
         pendingProviderToken = null
-        set({ signingOut: true, providerToken: null, tokenStatus: "loading", tokenError: null, tokenWarning: null, revision: generation })
+        set({ signingOut: true, providerToken: null, tokenStatus: "loading", tokenError: null, tokenWarning: null, savingToken: false, revision: generation })
         queryClient.clear()
         let timeout: ReturnType<typeof setTimeout> | undefined
         try {

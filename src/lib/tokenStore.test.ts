@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import { getProviderToken, saveProviderToken } from "./tokenStore"
+import { getProviderToken, saveProviderToken, TokenPersistenceError } from "./tokenStore"
 
 const chain = vi.hoisted(() => ({
   from: vi.fn(), select: vi.fn(), eq: vi.fn(), upsert: vi.fn(), abortSignal: vi.fn(), maybeSingle: vi.fn(),
@@ -37,7 +37,9 @@ describe("provider token persistence", () => {
     expect(chain.upsert.mock.results[0].value.abortSignal).toHaveBeenCalledWith(signal)
   })
   it("surfaces write failure rather than only logging it", async () => {
-    chain.upsert.mockReturnValue({ abortSignal: vi.fn().mockResolvedValue({ error: { message: "denied" } }) })
-    await expect(saveProviderToken("a", "token", signal)).rejects.toThrow("could not be saved")
+    chain.upsert.mockReturnValue({ abortSignal: vi.fn().mockResolvedValue({ error: { code: "42501", message: "denied", details: "policy" } }) })
+    const request = saveProviderToken("a", "token", signal)
+    await expect(request).rejects.toBeInstanceOf(TokenPersistenceError)
+    await expect(request).rejects.toMatchObject({ code: "42501", databaseMessage: "denied", details: "policy" })
   })
 })

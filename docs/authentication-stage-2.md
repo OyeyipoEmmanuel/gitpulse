@@ -117,6 +117,15 @@ See [Supabase RLS guidance](https://supabase.com/docs/guides/database/postgres/r
 
 ## Verification and remaining manual checks
 
+### Token persistence retry follow-up
+
+The 2026-09-07 follow-up preserves safe Supabase error codes for failed token
+writes, gives persistence a separate timeout, and exposes Retry saving and Dismiss
+actions without blocking a token that GitHub already verified. Apply
+`supabase/migrations/20260907000000_fix_user_tokens_upsert.sql` to grant the
+authenticated PostgREST upsert read access to generated `id` and `updated_at`
+columns. RLS continues to restrict every read and write to `auth.uid() = user_id`.
+
 Run `npm test`, `npm run build`, and `npm run lint`. Auth tests mock external
 services; they never access live credentials or write database records. They cover
 initial/fresh/saved sessions, recovery deduplication, wrong-account/revoked tokens,

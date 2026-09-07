@@ -9,7 +9,16 @@ const mocks = vi.hoisted(() => ({
   read: vi.fn(), save: vi.fn(), validate: vi.fn(),
 }))
 vi.mock("../lib/supabase", () => ({ supabase: { auth: mocks } }))
-vi.mock("../lib/tokenStore", () => ({ getProviderToken: mocks.read, saveProviderToken: mocks.save }))
+vi.mock("../lib/tokenStore", () => ({
+  getProviderToken: mocks.read,
+  saveProviderToken: mocks.save,
+  TokenPersistenceError: class TokenPersistenceError extends Error {
+    code: string | null = null
+    databaseMessage: string | null = null
+    details: string | null = null
+    hint: string | null = null
+  },
+}))
 vi.mock("../lib/validateGithubToken", () => ({ validateGithubToken: mocks.validate }))
 
 function session(id = "user-a", providerToken?: string): Session {
@@ -120,6 +129,25 @@ describe("auth lifecycle", () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(store.getState()).toMatchObject({ tokenStatus: "ready", providerToken: "new-token" })
     expect(store.getState().tokenWarning).toContain("could not be saved")
+  })
+
+  it("retries token persistence and clears the warning after success", async () => {
+    mocks.save.mockRejectedValueOnce(new Error("temporary failure")).mockResolvedValueOnce(undefined)
+    emit("SIGNED_IN", session("user-a", "new-token"))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(store.getState().tokenWarning).toContain("could not be saved")
+
+    await store.getState().retryTokenPersistence()
+
+    expect(mocks.save).toHaveBeenCalledTimes(2)
+    expect(store.getState()).toMatchObject({ tokenWarning: null, savingToken: false, providerToken: "new-token" })
+  })
+
+  it("uses a separate timeout for validation and persistence", async () => {
+    emit("SIGNED_IN", session("user-a", "new-token"))
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(mocks.validate.mock.calls[0][2]).not.toBe(mocks.save.mock.calls[0][2])
   })
 
   it("does not revalidate or rewrite a ready token on repeated sign-in/refresh events", async () => {

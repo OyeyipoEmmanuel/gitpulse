@@ -6,7 +6,8 @@ import GitHubConnectionGate from "./GitHubConnectionGate"
 
 const state = vi.hoisted(() => ({
   tokenStatus: "loading", tokenError: null as string | null, tokenWarning: null as string | null,
-  signingOut: false, revision: 1, user: { id: "a" }, retryTokenRecovery: vi.fn(), signOut: vi.fn(),
+  savingToken: false, signingOut: false, revision: 1, user: { id: "a" }, retryTokenRecovery: vi.fn(),
+  retryTokenPersistence: vi.fn(), dismissTokenWarning: vi.fn(), signOut: vi.fn(),
 }))
 vi.mock("../../store/authStore", () => ({ useAuthStore: () => state }))
 vi.mock("../../auth/signInWithGithub", () => ({ signInWithGithub: vi.fn() }))
@@ -22,7 +23,7 @@ function renderGate() {
 }
 
 describe("GitHub connection route gate", () => {
-  beforeEach(() => Object.assign(state, { tokenStatus: "loading", tokenError: null, tokenWarning: null, signingOut: false }))
+  beforeEach(() => Object.assign(state, { tokenStatus: "loading", tokenError: null, tokenWarning: null, savingToken: false, signingOut: false }))
 
   it.each(["idle", "loading", "error", "reconnect"])("never renders dashboard content while status is %s", status => {
     state.tokenStatus = status
@@ -57,6 +58,8 @@ describe("GitHub connection route gate", () => {
     state.tokenWarning = "Saving failed"
     const html = renderGate()
     expect(html).toContain("Saving failed")
+    expect(html).toContain("Retry saving")
+    expect(html).toContain("Dismiss")
     expect(html).toContain("Protected dashboard content")
   })
 })

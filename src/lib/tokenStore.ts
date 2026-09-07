@@ -1,5 +1,28 @@
 import { supabase } from "./supabase"
 
+interface SupabaseWriteError {
+    code?: string
+    message?: string
+    details?: string
+    hint?: string
+}
+
+export class TokenPersistenceError extends Error {
+    readonly code: string | null
+    readonly databaseMessage: string | null
+    readonly details: string | null
+    readonly hint: string | null
+
+    constructor(error: SupabaseWriteError) {
+        super("Your GitHub connection could not be saved. You may need to reconnect after reloading.")
+        this.name = "TokenPersistenceError"
+        this.code = error.code ?? null
+        this.databaseMessage = error.message ?? null
+        this.details = error.details ?? null
+        this.hint = error.hint ?? null
+    }
+}
+
 export const saveProviderToken = async (userId: string, token: string, signal: AbortSignal) => {
     const { error } = await supabase
         .from("user_tokens")
@@ -11,7 +34,7 @@ export const saveProviderToken = async (userId: string, token: string, signal: A
             onConflict: "user_id" 
         }).abortSignal(signal)
 
-    if (error) throw new Error("Your GitHub connection could not be saved. You may need to reconnect after reloading.")
+    if (error) throw new TokenPersistenceError(error)
 }
 
 export const getProviderToken = async (userId: string, signal: AbortSignal) => {
