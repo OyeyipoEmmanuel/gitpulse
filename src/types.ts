@@ -52,7 +52,7 @@ export interface StarredRepo {
   description: string | null;
   owner: {
     avatar_url: string;
-    name: string;
+    login: string;
   };
 }
 
@@ -76,25 +76,17 @@ export interface GithubEvent {
 }
 
 export interface RepositoryNode {
+  id: string;
   name: string;
-  pushedAt: string;
-  isArchived: boolean;
   diskUsage: number;
-  isFork: boolean
   stargazerCount: number;
   pullRequests: { totalCount: number };
   forkCount: number;
   primaryLanguage: { name: string; color?: string } | null;
-  openIssues: { totalCount: number };
-  openPRs: { totalCount: number };
   licenseInfo: { name: string } | null;
   updatedAt: string;
-  languages: {
-    edges: { size: number; node: { name: string; color: string } }[];
-  };
   defaultBranchRef: {
     target: {
-      committedDate: string;
       history: { totalCount: number };
     };
   } | null;
@@ -127,7 +119,7 @@ export interface ReportCardDimesions {
   label: string;
   grade: string | null | undefined;
   gradeColor: string | null | undefined;
-  gradeScore: number
+  gradeScore: number | null
   stats: Record<string, string | number>;
   bars?: { label: string; value: number; total: number }[];
 }
@@ -141,14 +133,6 @@ export interface CodeQualityNode {
 
 export interface CollaborationQuery {
   totalCount: number
-  nodes: {
-    pullRequest: {
-      createdAt: string;
-      comments: { totalCount: number };
-      reviews: { totalCount: number };
-    };
-    occurredAt: string;
-  }[];
 }
 
 export interface OpenSourceNode {
@@ -165,7 +149,7 @@ export interface TotalContributionObjectType {
   user: {
     [year: string]: {
       contributionCalendar: {
-        totalContribution: number
+        totalContributions: number
         weeks?: Array<{
           contributionDays: Array<{
             date: string
@@ -198,4 +182,3 @@ export interface ProfileCardDetails {
   longestStreak: number
   memberTier: "Veteran" | "Established" | "Rising"
 }
-
