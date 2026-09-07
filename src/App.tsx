@@ -13,7 +13,7 @@ const App = () => {
   useEffect(() => {
     const cleanup = initialize();
     return cleanup;
-  }, []);
+  }, [initialize]);
   
 
   return routing;
