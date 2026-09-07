@@ -12,21 +12,21 @@ import { MdForkRight } from "react-icons/md";
 import { RxCounterClockwiseClock } from "react-icons/rx";
 import { VscGitCommit, VscGitMerge, VscGitPullRequest, VscRepo, VscIssues, VscComment } from "react-icons/vsc";
 import { BiGitBranch } from "react-icons/bi";
+import { useState } from "react";
 
 
 
 
 const IndividualProfile = () => {
   const param = useParams()
+  const [renderedAt] = useState(Date.now)
 
-  const { data, isPending, error } = useFetchProfilePageDatas(param.username ?? null)
+  const { data, isPending, error, refetch } = useFetchProfilePageDatas(param.username ?? null)
 
-  if (error) return <ErrorToast message={error.message} />
+  if (error) return <ErrorToast message={error.message} onRetry={() => void refetch()} />
 
 
   if (isPending) return (<LoadingSpinner className="text-green-500 w-32 h-32" />)
-
-    console.log(data)
 
   const user = data?.graphqlData?.user
   const repos = data?.graphqlData?.user?.repositories
@@ -37,8 +37,6 @@ const IndividualProfile = () => {
   const starred = data?.starredRepos
   
   const recentEvents = data?.recentEvents
-  console.log(recentEvents)
-
   //Calc Languages percentage start
   const languageMap = repos?.nodes?.reduce((acc: Record<string, { count: number; color: string }>, repo: { primaryLanguage: { name: string; color: string } | null }) => {
     const lang = repo.primaryLanguage
@@ -81,7 +79,7 @@ const IndividualProfile = () => {
 
   // Recent activity helpers
   const timeAgo = (dateStr: string) => {
-    const diff = Date.now() - new Date(dateStr).getTime()
+    const diff = renderedAt - new Date(dateStr).getTime()
     const mins = Math.floor(diff / 60000)
     if (mins < 1) return "just now"
     if (mins < 60) return `${mins}m ago`
@@ -139,7 +137,7 @@ const IndividualProfile = () => {
           {/* Infos */}
           <div className="bg-[#161B22] flex p-4 md:p-8 flex-col space-y-3 md:space-y-0 md:flex-row md:space-x-4 items-center">
             {/* img */}
-            <img src={user.avatarUrl} alt={user.name} className=" rounded-[8px] " width={140} height={140} loading="lazy" />
+            <img src={user.avatarUrl} alt={user.name ?? user.login} className=" rounded-[8px] " width={140} height={140} loading="lazy" />
 
             <span className="">
               <aside className="text-center md:text-start">
@@ -264,7 +262,7 @@ const IndividualProfile = () => {
             <aside className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {starred.map((each: StarredRepo, idx: number) => (
                 <Card className="p-3 flex items-center space-x-3" key={idx}>
-                  <img src={each?.owner?.avatar_url} alt={each?.owner?.name} className="rounded-sm border border-[#2E343B]" width={40} height={40} />
+                  <img src={each.owner.avatar_url} alt={each.owner.login} className="rounded-sm border border-[#2E343B]" width={40} height={40} />
                   <div className="flex flex-col">
                     <p className="font-semibold text-white capitalize">{each.name}</p>
                     <p className="line-clamp-2 text-sm text-graySubtextColor">{each.description}</p>
