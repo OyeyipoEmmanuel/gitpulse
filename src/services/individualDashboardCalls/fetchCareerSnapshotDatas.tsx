@@ -19,12 +19,10 @@ export const useFetchCareerSnapshot = (username: string | null) => {
                 queryClient.fetchQuery({
                     queryKey: ['fetch_profilepage_datas', username],
                     queryFn: () => fetchProfilePageDatas(username!, token),
-                    staleTime: Infinity,
                 }),
                 queryClient.fetchQuery({
                     queryKey: ['fetch_report_card_datas', username],
                     queryFn: () => reportCardDatasFetch(username!, token, queryClient),
-                    staleTime: Infinity,
                 }),
             ])
 
