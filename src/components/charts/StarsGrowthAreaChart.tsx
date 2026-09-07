@@ -2,7 +2,10 @@ import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 // #endregion
 const StarsGrowthAreaChart = ({ data }: { data: { date: string; stars: number | unknown }[] }) => {
+    if (data.length === 0) return <p className="flex h-[300px] items-center justify-center text-sm text-graySubtextColor">No new stars in the last 30 days.</p>
+    const summary = data.map(item => `${item.date}: ${String(item.stars)}`).join(", ")
     return (
+        <div role="img" aria-label={`New repository stars by date. ${summary}`} className="w-full">
         <ResponsiveContainer width="100%" height={300}>
 
             <AreaChart
@@ -49,6 +52,7 @@ const StarsGrowthAreaChart = ({ data }: { data: { date: string; stars: number | 
                 />
             </AreaChart>
         </ResponsiveContainer>
+        </div>
     );
 };
 
