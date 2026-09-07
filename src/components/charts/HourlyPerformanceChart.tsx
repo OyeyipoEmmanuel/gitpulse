@@ -6,16 +6,17 @@ interface HourlyPerformanceChartProps {
 }
 
 const HourlyPerformanceChart = ({ data }: HourlyPerformanceChartProps) => {
+  const summary = data.filter(item => item.events > 0).map(item => `${item.hour}: ${item.events}`).join(", ") || "No recent public events"
   return (
     <Card className="p-5 flex flex-col gap-4 w-full">
       <div>
         <p className="text-white text-lg font-semibold">Hourly Performance</p>
         <p className="text-xs flex gap-1 text-graySubtextColor pt-2">
-          Based on your GitHub activity over the{" "}
-          <span className="text-secondaryTextColor font-extrabold">past 90 days</span>
+          Based on up to <span className="text-secondaryTextColor font-extrabold">300 recent public GitHub events</span>
         </p>
       </div>
 
+      <div role="img" aria-label={`Public GitHub events by hour. ${summary}`} className="w-full">
       <ResponsiveContainer width="100%" height={220}>
         <AreaChart
           data={data}
@@ -60,6 +61,7 @@ const HourlyPerformanceChart = ({ data }: HourlyPerformanceChartProps) => {
           />
         </AreaChart>
       </ResponsiveContainer>
+      </div>
     </Card>
   )
 }
