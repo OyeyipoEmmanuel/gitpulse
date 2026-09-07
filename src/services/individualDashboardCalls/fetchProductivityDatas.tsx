@@ -1,17 +1,26 @@
 import { fetchGraphQL } from "@/lib/github"
+import { githubAllPages } from "@/lib/githubFetch"
+import { GitHubDataError } from "@/lib/githubErrors"
 import { useAuthStore } from "@/store/authStore"
 import { useQuery } from "@tanstack/react-query"
 
-//Get this time last year date
-const today = new Date()
-const thisYearStart = `${today.getFullYear()}-01-01T00:00:00Z`
-const thisYearEnd = today.toISOString()
-const lastYearStart = `${today.getFullYear() - 1}-01-01T00:00:00Z`
-const lastYearEnd = new Date(
-  today.getFullYear() - 1,
-  today.getMonth(),
-  today.getDate()
-).toISOString()
+interface ContributionDay { contributionCount: number; date: string }
+interface ContributionWeeks { contributionCalendar: { weeks: Array<{ contributionDays: ContributionDay[] }> } }
+interface StreakData { user: null | { contributionsCollection: ContributionWeeks } }
+interface ConsistencyData {
+  user: null | { contributionsCollection: ContributionWeeks & {
+    totalCommitContributions: number
+    totalPullRequestContributions: number
+    totalPullRequestReviewContributions: number
+    totalIssueContributions: number
+  } }
+}
+interface YoyData {
+  user: null | {
+    thisYear: { contributionCalendar: { totalContributions: number } }
+    lastYear: { contributionCalendar: { totalContributions: number } }
+  }
+}
 
 const STREAK_QUERY = `query($username: String!) {
   user(login: $username) {
@@ -28,8 +37,6 @@ const STREAK_QUERY = `query($username: String!) {
   }
 }`
 
-
-const oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate())
 
 const CONSISTENCY_QUERY = `
   query($username: String!, $from: DateTime!, $to: DateTime!) {
@@ -66,26 +73,49 @@ const YoY_QUERY = `
 `
 
 export const fetchProductivityDatas = async (username: string, token: string) => {
-  const [getStreak, consistencyData, yoyReview, eventsRes] = await Promise.all([
-    fetchGraphQL(STREAK_QUERY, { username }, token),
+  const today = new Date()
+  const oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate())
+  const thisYearStart = `${today.getFullYear()}-01-01T00:00:00Z`
+  const thisYearEnd = today.toISOString()
+  const lastYearStart = `${today.getFullYear() - 1}-01-01T00:00:00Z`
+  const lastYearEnd = new Date(
+    today.getFullYear() - 1,
+    today.getMonth(),
+    today.getDate(),
+  ).toISOString()
 
-    fetchGraphQL(CONSISTENCY_QUERY, {
+  const [getStreak, consistencyData, yoyReview, eventsRes] = await Promise.all([
+    fetchGraphQL<StreakData>(STREAK_QUERY, { username }, token),
+
+    fetchGraphQL<ConsistencyData>(CONSISTENCY_QUERY, {
       username,
       from: oneYearAgo.toISOString(),
       to: today.toISOString(),
     }, token),
 
-    fetchGraphQL(YoY_QUERY, { username, thisYearStart, thisYearEnd, lastYearStart, lastYearEnd }, token),
+    fetchGraphQL<YoyData>(YoY_QUERY, { username, thisYearStart, thisYearEnd, lastYearStart, lastYearEnd }, token),
 
-    fetch(`https://api.github.com/users/${username}/events`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/vnd.github+json",
-      },
-    }).then(r => r.ok ? r.json() : [])
+    githubAllPages<{ created_at: string }>(`https://api.github.com/users/${username}/events?per_page=100`, token)
   ])
 
-  return { getStreak, consistencyData, yoyReview, eventsData: Array.isArray(eventsRes) ? eventsRes : [] }
+  const streakUser = getStreak.user
+  const consistencyUser = consistencyData.user
+  const yoyUser = yoyReview.user
+  const streakWeeks = streakUser?.contributionsCollection.contributionCalendar.weeks
+  const consistencyWeeks = consistencyUser?.contributionsCollection.contributionCalendar.weeks
+  const thisYearTotal = yoyUser?.thisYear.contributionCalendar.totalContributions
+  const lastYearTotal = yoyUser?.lastYear.contributionCalendar.totalContributions
+  if (!Array.isArray(streakWeeks) || !Array.isArray(consistencyWeeks) ||
+      !Number.isFinite(thisYearTotal) || !Number.isFinite(lastYearTotal)) {
+    throw new GitHubDataError("GitHub returned incomplete productivity data. Please retry the request.")
+  }
+
+  return {
+    getStreak: { user: streakUser! },
+    consistencyData: { user: consistencyUser! },
+    yoyReview: { user: yoyUser! },
+    eventsData: eventsRes,
+  }
 }
 
 export const useFetchProductivityDatas = (username: string | null) => {
