@@ -9,33 +9,10 @@ import CompetencyLevelCharts from "../components/CompetencyLevelCharts";
 import type { YoYReview } from "@/types";
 import { MostProductiveDaysChart, HourlyPerformanceChart } from "@/components/charts";
 import { getCurrentStreak, getLongestStreak } from "@/lib/streakCalculator";
+import { calculateConsistencyScore } from "@/lib/consistencyCalculator";
 
 function formatDate(dateStr: string) {
     return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-}
-
-export function calculateConsistencyScore(weeks: any[]) {
-    // const days = weeks.flatMap(w => w.contributionDays)
-
-    // only count days up to today (calendar includes future days)
-    const today = new Date()
-    const pastDays = weeks.filter(d => new Date(d.date) <= today)
-
-    const totalDays = pastDays.length
-    const activeDays = pastDays.filter(d => d.contributionCount > 0).length
-
-    const score = Math.round((activeDays / totalDays) * 100)
-
-    let remark: string = ""
-    let color: string = ""
-
-    if (score >= 80) { remark = "Very Consistent"; color = "#22C55E" }
-    else if (score >= 60) { remark = "Consistent"; color = "#84CC16" }
-    else if (score >= 50) { remark = "Average"; color = "#EAB308" }
-    else if (score >= 30) { remark = "Poor"; color = "#F97316" }
-    else { remark = "Very Poor"; color = "#EF4444" }
-
-    return { score, remark, color }
 }
 
 function yoyReview(datas: YoYReview) {
@@ -59,15 +36,15 @@ function yoyReview(datas: YoYReview) {
 const IndividualProductivity = () => {
     const params = useParams()
 
-    const { data, isPending, error } = useFetchProductivityDatas(params.username ?? null)
+    const { data, isPending, error, refetch } = useFetchProductivityDatas(params.username ?? null)
 
-    if (error) return <ErrorToast message={error.message} />
+    if (error) return <ErrorToast message={error.message} onRetry={() => void refetch()} />
     if (isPending) return <LoadingSpinner className="text-green-500 w-32 h-32" />
 
 
-    const daysOfStreaks = data?.getStreak?.user?.contributionsCollection?.contributionCalendar?.weeks?.flatMap((w: any) => w.contributionDays)
+    const daysOfStreaks = data?.getStreak?.user?.contributionsCollection?.contributionCalendar?.weeks?.flatMap((w: { contributionDays: Array<{ contributionCount: number; date: string }> }) => w.contributionDays) ?? []
 
-    const last12MonthsDays = data?.consistencyData?.user?.contributionsCollection?.contributionCalendar?.weeks?.flatMap((w: any) => w.contributionDays)
+    const last12MonthsDays = data?.consistencyData?.user?.contributionsCollection?.contributionCalendar?.weeks?.flatMap((w: { contributionDays: Array<{ contributionCount: number; date: string }> }) => w.contributionDays) ?? []
 
     const longestStreak = getLongestStreak(daysOfStreaks)
 
@@ -89,7 +66,6 @@ const IndividualProductivity = () => {
 
     // Hourly Performance — aggregate events by hour of day
     const hourTotals = new Array(24).fill(0)
-    console.log(data?.eventsData)
     const events = Array.isArray(data?.eventsData) ? data.eventsData : []
     events.forEach((event: { created_at: string }) => {
         if (event.created_at) {
