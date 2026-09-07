@@ -15,7 +15,7 @@ const GRADE_COLORS: Record<string, string> = {
 
 export const gradeCalculator = (scores: number[]): GradeCalculator | null => {
 
-  if (scores.length == 0) return null;
+  if (scores.length === 0 || scores.some(score => !Number.isFinite(score) || score < 0 || score > 100)) return null;
 
   const totalScore = scores.reduce((acc, r) => acc + r, 0) / scores.length;
 
