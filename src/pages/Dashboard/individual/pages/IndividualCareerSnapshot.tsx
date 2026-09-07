@@ -1,12 +1,14 @@
 import ErrorToast from "@/components/ui/error-toast"
 import { LoadingSpinner } from "@/components/ui/spinner"
 import { fetchGraphQL } from "@/lib/github"
+import { GitHubDataError } from "@/lib/githubErrors"
 import { useFetchCareerSnapshot } from "@/services/individualDashboardCalls/fetchCareerSnapshotDatas"
 import { useAuthStore } from "@/store/authStore"
 import type { RepositoryNode, TotalContributionObjectType, ProfileCardDetails } from "@/types"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 import { useParams } from "react-router-dom"
-import { openSourceFunc } from "./IndividualReportCard"
+import { openSourceDimension } from "@/lib/reportCardCalculator"
 import Card from "../components/Card"
 import { getTimeAgo } from "@/lib/timeAgo"
 import { getLongestStreak } from "@/lib/streakCalculator"
@@ -22,9 +24,10 @@ async function getAllTimeContributionCount(
     dateCreated: string,
     username: string,
     getToken: () => Promise<string | null>
-) {
+): Promise<TotalContributionObjectType> {
     const joinYear = new Date(dateCreated).getFullYear()
     const currentYear = new Date().getFullYear()
+    if (!username || !Number.isInteger(joinYear) || joinYear > currentYear) throw new GitHubDataError()
 
     const token = await getToken()
 
@@ -76,14 +79,13 @@ async function getAllTimeContributionCount(
     }
   `
 
-    const data = await fetchGraphQL(
+    const data = await fetchGraphQL<TotalContributionObjectType>(
         ALL_TIME_QUERY,
         { username },
         token
     )
 
-    console.log(data)
-
+    if (!data.user) throw new GitHubDataError("GitHub returned incomplete contribution history.")
     return data
 }
 
@@ -116,8 +118,8 @@ function getLanguageMastered(repoNodes: RepositoryNode[]) {
 const DESKTOP_WIDTH = 1440
 
 const IndividualCareerSnapshot = () => {
-    const [totalContributionObject, setTotalContributionObject] = useState<TotalContributionObjectType | null>(null)
     const [isDownloading, setIsDownloading] = useState(false)
+    const [downloadError, setDownloadError] = useState<string | null>(null)
     const contentRef = useRef<HTMLElement>(null)
 
     const downloadAsPng = async () => {
@@ -125,9 +127,12 @@ const IndividualCareerSnapshot = () => {
         if (!source) return
 
         setIsDownloading(true)
+        setDownloadError(null)
+        let wrapper: HTMLDivElement | null = null
 
         try {
-            const wrapper = document.createElement("div")
+            await document.fonts.ready
+            wrapper = document.createElement("div")
             wrapper.style.position = "fixed"
             wrapper.style.top = "-99999px"
             wrapper.style.left = "-99999px"
@@ -145,21 +150,23 @@ const IndividualCareerSnapshot = () => {
 
             const dataUrl = await toPng(clone, {
                 width: DESKTOP_WIDTH,
+                pixelRatio: 1,
+                cacheBust: true,
+                filter: (node) => !(node instanceof HTMLElement && node.dataset.exportExclude === "true"),
                 style: {
                     width: `${DESKTOP_WIDTH}px`,
                     transform: "none",
                 }
             })
 
-            document.body.removeChild(wrapper)
-
             const link = document.createElement("a")
             link.download = "gitpulse-career-snapshot.png"
             link.href = dataUrl
             link.click()
-        } catch (err) {
-            console.error("Failed to download snapshot:", err)
+        } catch {
+            setDownloadError("The PNG could not be generated. Check that profile images are reachable, then try again.")
         } finally {
+            wrapper?.remove()
             setIsDownloading(false)
         }
     }
@@ -168,72 +175,60 @@ const IndividualCareerSnapshot = () => {
     const { getToken, loading } = useAuthStore()
 
 
-    const { data, isPending, error } = useFetchCareerSnapshot(params.username ?? "")
+    const { data, isPending, error, refetch } = useFetchCareerSnapshot(params.username ?? "")
+    const {
+        data: totalContributionObject,
+        isPending: contributionsLoading,
+        error: contributionError,
+        refetch: refetchContributions,
+    } = useQuery({
+        queryKey: ["all_time_contributions", params.username, data?.userProfile?.createdAt],
+        enabled: !!params.username && !!data?.userProfile?.createdAt,
+        queryFn: () => getAllTimeContributionCount(data!.userProfile.createdAt, params.username!, getToken),
+    })
 
-    useEffect(() => {
-        async function loadContributions() {
-            try {
-                const datas = await getAllTimeContributionCount(
-                    data?.userProfile?.createdAt ?? "",
-                    params.username ?? "",
-                    getToken
-                )
-
-                setTotalContributionObject(datas)
-            } catch (err) {
-                <ErrorToast message={"An error Occured"} />
-            }
-        }
-
-        if (data?.userProfile && params.username) {
-            loadContributions()
-        }
-    }, [data?.userProfile, params.username])
-
-    if (error) return <ErrorToast message={error.message} />
-    if (isPending || loading) return <LoadingSpinner className="text-green-500 w-32 h-32" />
+    if (error) return <ErrorToast message={error.message} onRetry={() => void refetch()} />
+    if (contributionError) return <ErrorToast message={contributionError.message} onRetry={() => void refetchContributions()} />
+    if (isPending || loading || contributionsLoading) return <LoadingSpinner className="text-green-500 w-32 h-32" />
 
 
     const githubAge = getTimeAgo(data?.userProfile?.createdAt)
-    console.log(githubAge)
-
     const totalContributionCount = Object.values(totalContributionObject?.user || {}).reduce(
-        (sum: number, yearData: any) =>
+        (sum, yearData) =>
             sum + yearData.contributionCalendar.totalContributions,
         0
     )
 
-    console.log(totalContributionObject)
-
     //Get busiest year
-    const busiestYear = Object.entries(totalContributionObject ? totalContributionObject?.user : {}).reduce((max: { year: string; count: number }, [year, yearData]: [string, any]) =>
-        yearData.contributionCalendar.totalContributions > max.count ? { year, count: yearData.contributionCalendar.totalContributions }
-            : max
-        , { year: "", count: 0 })
+    const busiestYear = Object.entries(totalContributionObject?.user ?? {}).reduce(
+        (max, [year, yearData]) =>
+            !max || yearData.contributionCalendar.totalContributions > max.count
+                ? { year, count: yearData.contributionCalendar.totalContributions }
+                : max,
+        null as { year: string; count: number } | null,
+    )
 
     const currentYear = new Date().getFullYear()
-    const busiestYearNum = parseInt(busiestYear.year.replace("y", ""))
+    const busiestYearNum = Number(busiestYear?.year.slice(1))
 
     const daysInBusiestYear = busiestYearNum === currentYear
         ? Math.floor((new Date().getTime() - new Date(`${currentYear}-01-01`).getTime()) / (1000 * 60 * 60 * 24))
         : 365
 
     //OS contribution count
-    const OSContributionCount = openSourceFunc(data?.reportCard?.openSource?.user?.pullRequests?.nodes, params.username!).stats["PRs Merged"]
+    const OSContributionCount = openSourceDimension(data.reportCard.openSource.user.pullRequests.nodes, params.username!).stats["PRs Merged"]
 
     const langMastered = getLanguageMastered(data?.reportCard?.repoData?.overview?.user?.repositories?.nodes)
 
     // Calculate longest streak from current year data
     const currentYearKey = `y${new Date().getFullYear()}`
     const currentYearDays = totalContributionObject?.user?.[currentYearKey]?.contributionCalendar?.weeks
-        ?.flatMap((w: any) => w.contributionDays) ?? []
+        ?.flatMap((w) => w.contributionDays) ?? []
     const longestStreakData = getLongestStreak(currentYearDays)
-
-    console.log(data?.userProfile)
 
     const profileCardDetails: ProfileCardDetails = {
         profileImg: data?.userProfile?.avatarUrl,
-        name: data?.userProfile?.name,
+        name: data?.userProfile?.name ?? undefined,
         login: data?.userProfile?.login,
         githubAge: githubAge,
         topTechnology: langMastered[0],
@@ -252,13 +247,17 @@ const IndividualCareerSnapshot = () => {
                 <div className="flex flex-col justify-between md:flex-row">
                     <p className="text-graySubtextColor">A high-fidelity analysis of your engineering journey on Github.</p>
                     <button
+                        type="button"
+                        data-export-exclude="true"
                         onClick={downloadAsPng}
                         disabled={isDownloading}
+                        aria-busy={isDownloading}
                         className="w-fit self-end tracking-tight bg-[#248637] rounded-xs text-center px-6 py-2 md:self-start text-white text-lg font-semibold cursor-pointer hover:opacity-70 transition-all duration-200 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <MdOutlineFileDownload className={`text-xl ${isDownloading ? "animate-spin" : ""}`} />
-                        <p>{isDownloading ? "Generating..." : "Download as PNG"}</p>
+                        <span>{isDownloading ? "Generating..." : "Download as PNG"}</span>
                     </button>
+                    {downloadError && <p role="alert" data-export-exclude="true" className="mt-2 text-sm text-red-400">{downloadError}</p>}
                 </div>
 
 
@@ -319,13 +318,15 @@ const IndividualCareerSnapshot = () => {
                             <p className="text-secondaryTextColor uppercase text-[12px] font-bold tracking-widest">busiest year ever</p>
                             <IoStarSharp className="text-3xl text-[#238636]" />
                         </span>
-                        <span>
-                            <p className="text-white tracking-wider text-5xl numbersFont">{busiestYear.year.slice(1,)}</p>
-                            <p className="text-secondaryTextColor text-2xl numbersFont">{busiestYear.count} contributions</p>
-                        </span>
-                        <p className="flex gap-1 text-graySubtextColor text-sm">
-                            Averaging <p className="font-semibold">{(busiestYear.count / daysInBusiestYear).toFixed(1)} </p> activities per day during peak cycles.
-                        </p>
+                        {busiestYear ? <>
+                            <span>
+                                <p className="text-white tracking-wider text-5xl numbersFont">{busiestYear.year.slice(1)}</p>
+                                <p className="text-secondaryTextColor text-2xl numbersFont">{busiestYear.count} contributions</p>
+                            </span>
+                            <p className="flex gap-1 text-graySubtextColor text-sm">
+                                Averaging <span className="font-semibold">{(busiestYear.count / Math.max(daysInBusiestYear, 1)).toFixed(1)} </span> activities per day during peak cycles.
+                            </p>
+                        </> : <p className="text-graySubtextColor">No observable contribution history.</p>}
                     </div>
                 </section>
 
