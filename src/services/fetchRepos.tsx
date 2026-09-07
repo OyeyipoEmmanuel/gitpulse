@@ -1,5 +1,7 @@
 import { useAuthStore } from "@/store/authStore"
 import { useQuery } from "@tanstack/react-query"
+import { githubAllPages } from "@/lib/githubFetch"
+import type { GithubRepo } from "@/types"
 
 export const useFetchIndividualRepos = (username: string, type: string) => {
     const { getToken, loading } = useAuthStore()
@@ -14,14 +16,10 @@ export const useFetchIndividualRepos = (username: string, type: string) => {
 
             if (!token) throw new Error("No auth token available")
 
-            const res = await fetch(
-                `${url}/${type}/${username}/repos?sort=updated&per_page=10`,
-                { headers: { Authorization: `Bearer ${token}` } }
+            return githubAllPages<GithubRepo>(
+                `${url}/${type}/${username}/repos?sort=updated&per_page=100`,
+                token,
             )
-
-            if (!res.ok) throw new Error(res.statusText)
-
-            return res.json()
         }
     })
 }
