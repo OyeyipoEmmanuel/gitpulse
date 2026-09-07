@@ -7,7 +7,10 @@ const LanguageDistributionChart = ({ data }: {
     color: string
   }[]
 }) => {
+  if (data.length === 0) return <p className="flex h-[300px] items-center justify-center text-sm text-graySubtextColor">No repository-language data available.</p>
+  const summary = data.map(item => `${item.language}: ${item.percentage}%`).join(", ")
   return (
+    <div role="img" aria-label={`Repository language distribution. ${summary}`} className="w-full">
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={data} margin={{ bottom: 40, left:-20 }} >
         <XAxis
@@ -38,6 +41,7 @@ const LanguageDistributionChart = ({ data }: {
         </Bar>
       </BarChart>
     </ResponsiveContainer>
+    </div>
   );
 }
 
