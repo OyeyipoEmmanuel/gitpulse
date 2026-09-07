@@ -13,11 +13,10 @@ const BarsForMostActiveRepos = ({ recentRepos }: { recentRepos: RecentRepos[] })
         .flatMap((repo) => ({
             name: repo.name,
             totalCount: repo.totalCount,
-            percentage: Math.ceil((repo.totalCount / total) * 100)
+            percentage: total > 0 ? Math.ceil((repo.totalCount / total) * 100) : 0
         }))
         .sort((a, b) => b.percentage - a.percentage)
 
-    console.log(reposWithPercentage)
     return (
         <div className="grid grid-cols-1 gap-5 mt-5">
             {reposWithPercentage && reposWithPercentage.map((repo, idx) => (
