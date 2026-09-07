@@ -1,4 +1,7 @@
-import { fetchGraphQL } from "@/lib/github"
+import { fetchGraphQLConnection, type GraphQLConnection } from "@/lib/github"
+import { githubJson } from "@/lib/githubFetch"
+import { GitHubDataError } from "@/lib/githubErrors"
+import type { GithubEvent, PinnedRepo, StarredRepo } from "@/types"
 import { useAuthStore } from "@/store/authStore"
 import { useQuery } from "@tanstack/react-query"
 
@@ -46,25 +49,57 @@ const PROFILE_OVERVIEW_QUERY = `
   }
 `
 
+interface ProfileRepository {
+  primaryLanguage: { name: string; color: string } | null
+  openPRs: { totalCount: number }
+  mergedPRs: { totalCount: number }
+  closedPRs: { totalCount: number }
+}
+
+interface ProfileUser {
+  name: string | null
+  login: string
+  bio: string | null
+  avatarUrl: string
+  location: string | null
+  company: string | null
+  pronouns: string | null
+  createdAt: string
+  followers: { totalCount: number }
+  following: { totalCount: number }
+  pinnedItems: { nodes: PinnedRepo[] }
+  repositories: GraphQLConnection<ProfileRepository> & { totalCount: number }
+}
+
 export const fetchProfilePageDatas = async (username: string | null, token: string) => {
 
   const url = import.meta.env.VITE_GITHUB_API_URL
 
-  const [graphqlData, starredRepos, recentEvents] = await Promise.all([
-    //graphqlfetch
-    fetchGraphQL(PROFILE_OVERVIEW_QUERY, { username, cursor: null }, token),
+  type ProfileData = { user: ProfileUser | null }
+  const [profileResult, starredRepos, recentEvents] = await Promise.all([
+    fetchGraphQLConnection<ProfileData, ProfileRepository>(
+      PROFILE_OVERVIEW_QUERY,
+      { username },
+      token,
+      data => data.user?.repositories,
+    ),
 
     //starred repos
-    fetch(`${url}/users/${username}/starred?per_page=4`, {
-      headers: { Authorization: `Bearer ${token}` }
-    }).then((res) => res.json()),
+    githubJson<StarredRepo[]>(`${url}/users/${username}/starred?per_page=4`, token),
 
     //recent events
-    fetch(`${url}/users/${username}/events?per_page=4`, {
-      headers: { Authorization: `Bearer ${token}` }
-    }).then((res) => res.json()),
+    githubJson<GithubEvent[]>(`${url}/users/${username}/events?per_page=4`, token),
   ])
 
+  const firstUser = profileResult.firstPage.user
+  if (!firstUser) throw new GitHubDataError("The requested GitHub user could not be found.")
+  const graphqlData = {
+    ...profileResult.firstPage,
+    user: {
+      ...firstUser,
+      repositories: { ...firstUser.repositories, nodes: profileResult.nodes },
+    },
+  }
   return { graphqlData, starredRepos, recentEvents }
 }
 
