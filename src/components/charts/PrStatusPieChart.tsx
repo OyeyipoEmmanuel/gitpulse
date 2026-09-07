@@ -7,7 +7,11 @@ type PrStatusEntry = {
 }
 
 const PrStatusPieChart = ({ data }: { data: PrStatusEntry[] }) => {
+  const total = data.reduce((sum, item) => sum + item.value, 0)
+  if (total === 0) return <p className="flex h-[260px] items-center justify-center text-sm text-graySubtextColor">No pull requests available.</p>
+  const summary = data.map(item => `${item.name}: ${item.value}`).join(", ")
   return (
+    <div role="img" aria-label={`Pull request status. ${summary}`} className="w-full">
     <ResponsiveContainer width="100%" height={260}>
       <PieChart>
         <Pie
@@ -30,6 +34,7 @@ const PrStatusPieChart = ({ data }: { data: PrStatusEntry[] }) => {
         />
       </PieChart>
     </ResponsiveContainer>
+    </div>
   )
 }
 
