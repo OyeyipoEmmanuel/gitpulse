@@ -2,172 +2,30 @@ import ErrorToast from "@/components/ui/error-toast"
 import { LoadingSpinner } from "@/components/ui/spinner"
 import { gradeCalculator } from "@/lib/gradeCalculator"
 import { useFetchReportCardDatas } from "@/services/individualDashboardCalls/fetchReportCardDatas"
-import type { CodeQualityNode, CollaborationQuery, OpenSourceNode, ReportCardDimesions, RepositoryNode } from "@/types"
+import type { ReportCardDimesions } from "@/types"
 import { useParams } from "react-router-dom"
 import Card from "../components/Card"
-import { calculateConsistencyScore } from "./IndividualProductivity"
+import { calculateConsistencyScore } from "@/lib/consistencyCalculator"
 import { getCurrentStreak } from "@/lib/streakCalculator"
-
-
-function codeQualityFunc(data: CodeQualityNode[], repos: RepositoryNode[]): ReportCardDimesions {
-    // Avg pr size
-    const total = data?.reduce((acc: number, r: CodeQualityNode) =>
-        acc + (r.additions + r.deletions), 0
-    )
-    const avgPrSize = (total / data.length).toFixed(0)
-
-    //pr merge rate
-    let totalMerged: number = 0
-    data.map((eachPr) => {
-        if (eachPr.state === "MERGED") {
-            totalMerged += 1
-        }
-    })
-    const prMergeRate = ((totalMerged / data.length) * 100)
-
-    //Avg Prs per repo
-    const totalPRs = repos.reduce((acc, repo) => acc + repo.pullRequests.totalCount, 0)
-    const avgPRsPerRepo = Math.round(totalPRs / repos.length)
-
-    //Get Grade
-    const grade = gradeCalculator([prMergeRate])
-    console.log(grade?.totalScore)
-
-    return {
-        label: "Code Quality",
-        grade: grade?.grade,
-        gradeColor: grade?.color,
-        gradeScore: grade?.totalScore ?? 0,
-        stats: {
-            "Avg Pr Size": `${avgPrSize} lines`,
-            "PR Merge Rate": `${prMergeRate.toFixed(0)}%`,
-            "Avg PRs per repo": avgPRsPerRepo
-        }
-    }
-
-}
-
-function consistencyFunc(
-    currStreak: number,
-    consistencyScore: { score: number; remark: string; color: string },
-    mostActiveWeek: { day: string; contributions: number }[]
-): ReportCardDimesions {
-    const mostActiveDay = mostActiveWeek.reduce((max, d) =>
-        d.contributions > max.contributions ? d : max, mostActiveWeek[0]
-    )
-
-    const grade = gradeCalculator([consistencyScore.score])
-
-    return {
-        label: "Consistency",
-        grade: grade?.grade,
-        gradeColor: grade?.color,
-        gradeScore: grade?.totalScore ?? 0,
-        stats: {
-            "Current Streak": `${currStreak} days`,
-            "Consistency Score": `${consistencyScore.score}%`,
-            "Most Active Day": mostActiveDay.day + "day",
-        }
-    }
-}
-
-export function collaborationFunc(collabData: CollaborationQuery, openSourceData: OpenSourceNode[], username: string): ReportCardDimesions {
-    const prsReviewed = collabData?.totalCount
-    const prsReviewedPercentageScore = Math.min((prsReviewed / 10) * 100, 100)
-
-    const extRepos = openSourceData.filter(node => node.repository.owner.login !== username)
-
-    const extRepoContributedTo = new Set(extRepos.map(node => node.repository.nameWithOwner)).size
-
-
-    const totalPrsOpenedInOthersRepo = extRepos.length
-
-    const totalPrsOpenedInOthersRepoPercentageScore = Math.min((totalPrsOpenedInOthersRepo / 5) * 100, 100)
-
-    const grade = gradeCalculator([prsReviewedPercentageScore, totalPrsOpenedInOthersRepoPercentageScore])
-
-    return {
-        label: "Collaboration",
-        grade: grade?.grade,
-        gradeColor: grade?.color,
-        gradeScore: grade?.totalScore ?? 0,
-        stats: {
-            "PRs Reviewed": prsReviewed,
-            "External Repos": extRepoContributedTo,
-            "PRs in Others Repos": totalPrsOpenedInOthersRepo,
-        }
-    }
-}
-
-export function openSourceFunc(data: OpenSourceNode[], username: string): ReportCardDimesions {
-    const extRepos = data.filter(node => node.repository.owner.login !== username)
-
-    const extRepoContributedTo = new Set(extRepos.map(node => node.repository.nameWithOwner)).size
-
-    const topRepo = extRepos.reduce((max, node) =>
-        node.repository.stargazerCount > (max?.repository.stargazerCount ?? 0) ? node : max
-        , extRepos[0])
-
-    const grade = gradeCalculator([Math.min((extRepos.length / 5) * 100, 100)])
-
-    return {
-        label: "Open Source",
-        grade: grade?.grade,
-        gradeColor: grade?.color,
-        gradeScore: grade?.totalScore ?? 0,
-        stats: {
-            "External Repos": extRepoContributedTo,
-            "PRs Merged": extRepos.length,
-            "Top Repo": topRepo?.repository.name ?? "—",
-        }
-    }
-}
-
-function maintenanceFunc(data: RepositoryNode[]): ReportCardDimesions {
-    const totalCount = data?.filter((r: RepositoryNode) => r.isFork !== null).length
-    const totalLicense = data?.filter((r: RepositoryNode) => r.licenseInfo !== null).length
-
-    const totalReadme = data?.filter((r: RepositoryNode) => r.object !== null).length
-
-    const totalLicensePercentage = Math.floor((totalLicense / totalCount) * 100)
-
-    const totalReadmePercentage = Math.floor((totalReadme / totalCount) * 100)
-    const grade = gradeCalculator([totalLicensePercentage, totalReadmePercentage])
-
-    return {
-        label: "Maintenance",
-        grade: grade?.grade,
-        gradeColor: grade?.color,
-        gradeScore: grade?.totalScore ?? 0,
-        stats: {},
-        bars: [
-            { label: "README Coverage", value: totalReadme, total: totalCount },
-            { label: "License Coverage", value: totalLicense, total: totalCount },
-        ]
-    }
-}
-
-
+import { codeQualityDimension, collaborationDimension, consistencyDimension, maintenanceDimension, openSourceDimension } from "@/lib/reportCardCalculator"
 const IndividualReportCard = () => {
     const params = useParams()
-    let reportCardDimensions: ReportCardDimesions[] = []
+    const reportCardDimensions: ReportCardDimesions[] = []
 
-    const { data, isPending, error } = useFetchReportCardDatas(params.username ?? null)
+    const { data, isPending, error, refetch } = useFetchReportCardDatas(params.username ?? null)
 
-    if (error) return <ErrorToast message={error.message} />
+    if (error) return <ErrorToast message={error.message} onRetry={() => void refetch()} />
     if (isPending) return (<LoadingSpinner className="text-green-500 w-32 h-32" />)
 
-    console.log(data?.repoData)
-
     //code quality
-    const codeQuality = codeQualityFunc(data?.codeQuality?.user?.pullRequests?.nodes, data?.repoData?.overview?.user?.repositories?.nodes)
+    const codeQuality = codeQualityDimension(data.codeQuality.user.pullRequests.nodes, data.repoData.overview.user.repositories.nodes)
     reportCardDimensions.push(codeQuality)
 
     // Consistency
-    const productivityData = data?.productivityData
-    const daysOfStreaks = productivityData?.getStreak?.user?.contributionsCollection?.contributionCalendar?.weeks?.flatMap((w: any) => w.contributionDays)
+    const productivityData = data.productivityData
+    const daysOfStreaks = productivityData.getStreak.user.contributionsCollection.contributionCalendar.weeks.flatMap((w: { contributionDays: Array<{ contributionCount: number; date: string }> }) => w.contributionDays)
 
-    const last12MonthsDays = productivityData?.consistencyData?.user?.contributionsCollection?.contributionCalendar?.weeks?.flatMap((w: any) => w.contributionDays)
+    const last12MonthsDays = productivityData.consistencyData.user.contributionsCollection.contributionCalendar.weeks.flatMap((w: { contributionDays: Array<{ contributionCount: number; date: string }> }) => w.contributionDays)
 
     const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     const dayTotals: Record<string, number> = { Sun: 0, Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0 }
@@ -180,27 +38,28 @@ const IndividualReportCard = () => {
         contributions: dayTotals[day]
     }))
 
-    const consistency = consistencyFunc(getCurrentStreak(daysOfStreaks), calculateConsistencyScore(last12MonthsDays), mostProductiveDaysData)
+    const consistency = consistencyDimension(getCurrentStreak(daysOfStreaks), calculateConsistencyScore(last12MonthsDays), mostProductiveDaysData)
     reportCardDimensions.push(consistency)
 
     //Collaboration
-    const collaboration = collaborationFunc(
-        data?.collab?.user?.contributionsCollection?.pullRequestReviewContributions,
-        data?.openSource?.user?.pullRequests?.nodes,
+    const collaboration = collaborationDimension(
+        data.collab.user.contributionsCollection.pullRequestReviewContributions,
+        data.openSource.user.pullRequests.nodes,
         params.username!
     )
     reportCardDimensions.push(collaboration)
 
     //Open Source
-    reportCardDimensions.push(openSourceFunc(data?.openSource?.user?.pullRequests?.nodes, params.username!))
+    reportCardDimensions.push(openSourceDimension(data.openSource.user.pullRequests.nodes, params.username!))
 
     //Maintenance
-    reportCardDimensions.push(maintenanceFunc(data?.repoData?.overview?.user?.repositories?.nodes))
-
-    console.log(reportCardDimensions)
+    reportCardDimensions.push(maintenanceDimension(data.repoData.overview.user.repositories.nodes))
 
     //Calc overall grade
-    const overallGrade = gradeCalculator([...reportCardDimensions.map((card)=> card.gradeScore)])
+    const availableScores = reportCardDimensions
+        .map(card => card.gradeScore)
+        .filter((score): score is number => score !== null)
+    const overallGrade = gradeCalculator(availableScores)
     
 
     return (
@@ -214,7 +73,7 @@ const IndividualReportCard = () => {
                     border: `2px solid ${overallGrade?.color}`,
                     color: overallGrade?.color ?? ""
                 }}>
-                    <p className="font-extrabold text-6xl ">{overallGrade?.grade ?? "F"}</p>
+                    <p className="font-extrabold text-6xl ">{overallGrade?.grade ?? "—"}</p>
                 </div>
                 <p className="tracking-wider font-semibold text-graySubtextColor uppercase pt-5">overall developer score</p>
 
@@ -226,6 +85,7 @@ const IndividualReportCard = () => {
                     {overallGrade?.grade === "D" && "Some dimensions need attention. Focus on consistency and collaboration."}
                     {overallGrade?.grade === "E" && "Several areas are underperforming. Small daily habits can turn this around."}
                     {overallGrade?.grade === "F" && "It's a tough start, but every expert was once a beginner. Keep pushing."}
+                    {!overallGrade && "Not enough observable activity is available to calculate an overall score."}
                 </p>
 
                 {/* stat with grade */}
@@ -236,7 +96,7 @@ const IndividualReportCard = () => {
                             border: `1px solid ${card.gradeColor}`,
                             color: card.gradeColor ?? ""
                         }}>
-                            {card.label}: {card.grade}
+                            {card.label}: {card.grade ?? "N/A"}
                         </span>
                     ))}
                 </div>
