@@ -1,4 +1,25 @@
-# React + TypeScript + Vite
+# GitPulse
+
+## Regression checks
+
+Run `npm test` for calculator tests or `npm run test:watch` while editing.
+See [the testing baseline](docs/testing-baseline.md) for setup, known defects,
+empty/missing-data expectations, and current build/lint results.
+
+See [Stage 2 authentication notes](docs/authentication-stage-2.md) for the updated
+token lifecycle and verified Supabase policy hardening.
+
+See [Stage 3 analytics notes](docs/analytics-stage-3.md) for GitHub API failure,
+rate-limit, pagination, retry, and empty-data behavior.
+
+See [Stage 4 UI notes](docs/ui-stage-4.md) for accessibility, responsive navigation,
+route-level code splitting, browser checks, and PNG-export behavior.
+
+See [Stages 5–6 performance and navigation notes](docs/performance-navigation-stages-5-6.md)
+for request batching, shared cache freshness, 404/error handling, and explicit
+organization feature states.
+
+## Original scaffold notes
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
