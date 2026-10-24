@@ -39,7 +39,7 @@ const IndividualProductivity = () => {
     const { data, isPending, error, refetch } = useFetchProductivityDatas(params.username ?? null)
 
     if (error) return <ErrorToast message={error.message} onRetry={() => void refetch()} />
-    if (isPending) return <LoadingSpinner className="text-green-500 w-32 h-32" />
+    if (isPending) return <LoadingSpinner className="text-white w-32 h-32" />
 
 
     const daysOfStreaks = data?.getStreak?.user?.contributionsCollection?.contributionCalendar?.weeks?.flatMap((w: { contributionDays: Array<{ contributionCount: number; date: string }> }) => w.contributionDays) ?? []
