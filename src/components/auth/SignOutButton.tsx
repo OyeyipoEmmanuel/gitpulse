@@ -1,11 +1,13 @@
+import { LogOut } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { useAuthStore } from "../../store/authStore"
 
 export default function SignOutButton() {
   const { signOut, signingOut } = useAuthStore()
   return (
-    <button type="button" onClick={() => void signOut()} disabled={signingOut}
-      className="rounded-lg border border-[#30363D] px-4 py-2 text-white disabled:opacity-50">
+    <Button type="button" variant="outline" onClick={() => void signOut()} disabled={signingOut}>
+      <LogOut aria-hidden="true" />
       {signingOut ? "Signing out…" : "Logout"}
-    </button>
+    </Button>
   )
 }
