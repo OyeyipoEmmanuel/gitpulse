@@ -3,6 +3,7 @@ import { useAuthStore } from "../../store/authStore"
 import { LoadingSpinner } from "../ui/spinner"
 import GitHubSignInButton from "./GitHubSignInButton"
 import SignOutButton from "./SignOutButton"
+import { Button } from "../ui/button"
 
 export default function GitHubConnectionGate() {
   const { tokenStatus, tokenError, tokenWarning, savingToken, signingOut, revision, user, retryTokenRecovery, retryTokenPersistence, dismissTokenWarning } = useAuthStore()
@@ -16,7 +17,7 @@ export default function GitHubConnectionGate() {
       <h1 className="text-2xl font-semibold">GitHub connection needs attention</h1>
       <p role="alert">{tokenError}</p>
       <div className="flex flex-wrap gap-3">
-        {tokenStatus === "error" && <button type="button" className="rounded-lg border px-4 py-2" onClick={() => void retryTokenRecovery()}>Try again</button>}
+        {tokenStatus === "error" && <Button type="button" variant="outline" onClick={() => void retryTokenRecovery()}>Try again</Button>}
         <GitHubSignInButton label="Reconnect GitHub" />
         <SignOutButton />
       </div>
@@ -25,12 +26,12 @@ export default function GitHubConnectionGate() {
   return <>
     {tokenWarning && <div role="status" className="flex flex-wrap items-center justify-center gap-3 bg-[#172524] p-3 text-center text-white">
       <p>{tokenWarning}</p>
-      <button type="button" disabled={savingToken} onClick={() => void retryTokenPersistence()} className="rounded-md border border-[#3FB950] px-3 py-1 text-sm font-semibold text-[#3FB950] hover:bg-[#238636]/20 disabled:cursor-wait disabled:opacity-60">
+      <Button type="button" size="sm" variant="outline" disabled={savingToken} onClick={() => void retryTokenPersistence()}>
         {savingToken ? "Saving…" : "Retry saving"}
-      </button>
-      <button type="button" onClick={dismissTokenWarning} className="rounded-md px-3 py-1 text-sm text-[#C9D1D9] underline-offset-4 hover:underline">
+      </Button>
+      <Button type="button" size="sm" variant="ghost" onClick={dismissTokenWarning}>
         Dismiss
-      </button>
+      </Button>
     </div>}
     <Outlet key={`${user?.id}:${revision}`} />
   </>
