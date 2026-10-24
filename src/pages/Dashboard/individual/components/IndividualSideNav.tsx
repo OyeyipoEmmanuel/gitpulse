@@ -1,87 +1,47 @@
 import Logo from "@/components/ui/Logo"
-import { navContent } from "../datas"
-import { NavLink } from "react-router-dom"
-import { X } from "lucide-react"
 import SignOutButton from "@/components/auth/SignOutButton"
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
+import { cn } from "@/lib/utils"
+import { NavLink } from "react-router-dom"
+import { Settings2 } from "lucide-react"
+import { navContent } from "../datas"
 
 interface IndividualSideNavProps {
   isOpen?: boolean
   onClose?: () => void
 }
 
-const NavLinks = ({ onClose }: { onClose?: () => void }) => (
-  <>
-    <section className="w-full flex flex-col">
-      <div className="px-6 flex items-center justify-center py-3.5">
-        <Logo textSize={22} />
-      </div>
-      <ul className="flex flex-col space-y-5 md:space-y-8 p-6 border-t border-[#23282E]">
-        {navContent.map((each) => (
-          <li key={each.path}>
-            <NavLink
-              to={each.path}
-              onClick={onClose}
-              className={({ isActive }) =>
-                `flex items-center space-x-4 ${isActive ? "pl-4 border-l-2 border-[#227B34] bg-[#20252C] py-2.5 rounded-sm font-semibold" : ""}`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  {each.icon}
-                  <p className={`text-14px ${isActive ? "text-[#227B34]" : "text-[#94A3B8]"}`}>
-                    {each.label}
-                  </p>
-                </>
-              )}
-            </NavLink>
-          </li>
-        ))}
-      </ul>
-    </section>
-
-    <section className="border-t border-[#2D3239] p-6 flex items-center space-x-4">
-      <SignOutButton />
-    </section>
-  </>
+const navLinkClass = ({ isActive }: { isActive: boolean }) => cn(
+  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground",
+  isActive && "bg-accent text-foreground shadow-sm",
 )
 
-const IndividualSideNav = ({ isOpen = false, onClose }: IndividualSideNavProps) => {
+const NavLinks = ({ onClose }: { onClose?: () => void }) => (
+  <div className="flex h-full flex-col">
+    <div className="flex h-20 items-center border-b px-6"><Logo textSize={22} /></div>
+    <nav aria-label="Personal dashboard" className="flex-1 overflow-y-auto p-4">
+      <p className="px-3 pb-3 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Workspace</p>
+      <ul className="space-y-1">
+        {navContent.map(each => <li key={each.path}><NavLink to={each.path} onClick={onClose} className={navLinkClass}>{each.icon}<span>{each.label}</span></NavLink></li>)}
+      </ul>
+    </nav>
+    <div className="space-y-3 border-t p-4">
+      <NavLink to="settings" onClick={onClose} className={navLinkClass}><Settings2 aria-hidden="true" size={19} strokeWidth={1.5} /><span>Settings</span></NavLink>
+      <SignOutButton />
+    </div>
+  </div>
+)
+
+export default function IndividualSideNav({ isOpen = false, onClose }: IndividualSideNavProps) {
   return (
     <>
-      {/* Desktop sidebar */}
-      <nav className="hidden w-[256px] h-screen fixed bg-[#161B22] md:flex flex-col justify-between z-50 border-r border-[#2D3239]">
-        <NavLinks />
-      </nav>
-
-      {/* Mobile drawer backdrop */}
-      <button type="button" aria-label="Close dashboard menu" tabIndex={isOpen ? 0 : -1}
-        className={`fixed inset-0 z-40 bg-black/50 md:hidden transition-opacity duration-300 ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
-        onClick={onClose}
-      />
-
-      {/* Mobile drawer */}
-      <nav
-        inert={!isOpen ? true : undefined}
-        aria-label="Personal dashboard"
-        aria-hidden={!isOpen}
-        className={`fixed inset-y-0 left-0 z-50 w-[80%] bg-[#161B22] flex flex-col justify-between border-r border-[#2D3239] md:hidden
-          transition-transform duration-300 ease-in-out
-          ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
-      >
-        {/* Close button */}
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 text-[#94A3B8] hover:text-white transition-colors"
-          aria-label="Close menu"
-        >
-          <X size={20} />
-        </button>
-
-        <NavLinks onClose={onClose} />
-      </nav>
+      <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 border-r bg-sidebar text-sidebar-foreground md:block"><NavLinks /></aside>
+      <Sheet open={isOpen} onOpenChange={open => { if (!open) onClose?.() }}>
+        <SheetContent side="left" className="w-[82%] max-w-72 gap-0 p-0 md:hidden">
+          <SheetTitle className="sr-only">Personal dashboard navigation</SheetTitle>
+          <NavLinks onClose={onClose} />
+        </SheetContent>
+      </Sheet>
     </>
   )
 }
-
-export default IndividualSideNav
