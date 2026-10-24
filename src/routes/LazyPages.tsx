@@ -12,6 +12,7 @@ export const IndividualProductivity = lazy(() => import("@/pages/Dashboard/indiv
 export const IndividualReportCard = lazy(() => import("@/pages/Dashboard/individual/pages/IndividualReportCard"))
 export const IndividualCareerSnapshot = lazy(() => import("@/pages/Dashboard/individual/pages/IndividualCareerSnapshot"))
 export const AskBob = lazy(() => import("@/pages/Dashboard/individual/pages/AskBob"))
+export const IndividualSettings = lazy(() => import("@/pages/Dashboard/individual/pages/IndividualSettings"))
 export const OrganizationComingSoon = lazy(() => import("@/pages/Dashboard/organization/pages/OrganizationComingSoon"))
 export const NotFoundPage = lazy(() => import("@/pages/status/NotFoundPage"))
 export const RouteErrorPage = lazy(() => import("@/pages/status/RouteErrorPage"))
