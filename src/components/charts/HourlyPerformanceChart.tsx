@@ -30,21 +30,21 @@ const HourlyPerformanceChart = ({ data }: HourlyPerformanceChartProps) => {
           </defs>
           <XAxis
             dataKey="hour"
-            tick={{ fill: "#8b949e", fontSize: 10 }}
+            tick={{ fill: "#8B949E", fontSize: 10 }}
             interval={2}
-            axisLine={{ stroke: "#30363d" }}
+            axisLine={{ stroke: "#30363D" }}
             tickLine={false}
           />
           <YAxis
-            tick={{ fill: "#8b949e", fontSize: 11 }}
+            tick={{ fill: "#8B949E", fontSize: 11 }}
             axisLine={false}
             tickLine={false}
           />
           <Tooltip
             formatter={(value) => [value, "Events"]}
             contentStyle={{
-              background: "#161b22",
-              border: "1px solid #30363d",
+              background: "#161B22",
+              border: "1px solid #30363D",
               borderRadius: "6px",
               color: "#e6edf3",
               fontSize: "12px",
