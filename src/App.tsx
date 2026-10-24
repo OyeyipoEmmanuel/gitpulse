@@ -2,6 +2,7 @@ import { useRoutes } from "react-router-dom"
 import { routes } from "./routes/routes"
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
+import PageMetadata from "./components/seo/PageMetadata";
 
 
 const App = () => {
@@ -16,7 +17,12 @@ const App = () => {
   }, [initialize]);
   
 
-  return routing;
+  return (
+    <>
+      <PageMetadata />
+      {routing}
+    </>
+  );
 }
 
 export default App
