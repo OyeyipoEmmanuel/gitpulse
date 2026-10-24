@@ -9,6 +9,7 @@ import { useFetchIndividualRepos } from "@/services/fetchRepos"
 import { useState } from "react"
 import { useParams } from "react-router-dom"
 import type { GithubRepo } from "@/types"
+import { Button } from "@/components/ui/button"
 
 type Selected = {
     name: string;
@@ -33,7 +34,7 @@ const SelectOrgRepoMenu = () => {
         <div className="">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <button className="bg-[#0D1117] px-3 py-2 w-full border border-[#292F36] rounded-lg cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 outline-none" disabled={isPending}>
+                    <Button variant="outline" className="h-auto w-full justify-start px-3 py-2" disabled={isPending}>
                         {error ? (
                             <p className="text-white text-center">Error</p>
                         ) : isPending ? (
@@ -51,9 +52,9 @@ const SelectOrgRepoMenu = () => {
                             </div>
                         )}
 
-                    </button>
+                    </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent side="right" className="bg-[#0D1117] text-white border border-[#2D3239]">
+                <DropdownMenuContent side="right">
                     <DropdownMenuRadioGroup
                         value={selected.name}
                         onValueChange={(name) => {
