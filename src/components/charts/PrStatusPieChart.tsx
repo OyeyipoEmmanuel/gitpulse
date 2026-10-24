@@ -25,7 +25,7 @@ const PrStatusPieChart = ({ data }: { data: PrStatusEntry[] }) => {
         />
         <Tooltip
           formatter={(value, name) => [value ?? 0, name]}
-          contentStyle={{ backgroundColor: "#161B22", border: "1px solid #23282E", borderRadius: 6 }}
+          contentStyle={{ backgroundColor: "#161B22", border: "1px solid #30363D", borderRadius: 6 }}
           labelStyle={{ color: "#8B949E" }}
           itemStyle={{ color: "#fff" }}
         />
