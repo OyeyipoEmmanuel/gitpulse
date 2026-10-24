@@ -5,6 +5,9 @@ import { useGetAccountsToDisplay } from "../../services/fetchAllAccount"
 import { useNavigate } from "react-router-dom"
 import type { GithubOrg } from "@/types"
 import SignOutButton from "@/components/auth/SignOutButton"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
 
 
 const SelectAcount = () => {
@@ -15,7 +18,7 @@ const SelectAcount = () => {
 
     if (isPending) return (
         <div className="w-screen h-screen bg-primaryBg">
-            <LoadingSpinner className="text-green-500 w-32 h-32" />
+            <LoadingSpinner className="text-white w-32 h-32" />
         </div>
     )
 
@@ -33,49 +36,43 @@ const SelectAcount = () => {
                     <SignOutButton />
                 </div>
 
-                <section className="grid grid-cols-1 gap-3">
+                <section className="grid w-full grid-cols-1 gap-3">
 
                     {/* For User */}
                     {data.user && (
-                        <button type="button" className="w-full text-left bg-[#161B22] border border-[#2A2F36] rounded-md p-3 flex flex-row justify-between items-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer" onClick={() => navigate(`/dashboard/personal/${data.user.login}/profile`)}>
-                            <div className="flex space-x-3 items-center md:space-x-6">
+                        <Button type="button" variant="outline" className="flex h-auto w-full min-w-0 items-start justify-between gap-3 whitespace-normal p-4 text-left" onClick={() => navigate(`/dashboard/personal/${data.user.login}/profile`)}>
+                            <div className="flex min-w-0 flex-1 items-center gap-3 md:gap-6">
                                 {/* img */}
-                                <img src={data.user.avatar_url} alt={`${data.user.name ?? data.user.login}`} className="rounded-xl" width={48} height={48} loading="lazy" />
+                                <img src={data.user.avatar_url} alt={`${data.user.name ?? data.user.login}`} className="shrink-0 rounded-xl" width={48} height={48} loading="lazy" />
                                 {/* name */}
-                                <span className="space-y-2">
-                                    <h1 className="font-semibold md:text-xl">{data.user.name}</h1>
-                                    <p className="line-clamp-2 text-sm text-graySubtextColor">{data.user.bio}</p>
+                                <span className="min-w-0 flex-1 space-y-2">
+                                    <h1 className="break-words font-semibold md:text-xl">{data.user.name ?? data.user.login}</h1>
+                                    <p className="break-words text-sm text-graySubtextColor [overflow-wrap:anywhere]">{data.user.bio}</p>
                                 </span>
                             </div>
                             {/* type */}
-                            <div className="capitalize bg-[#30363D] rounded-full px-3 py-0.5 h-fit text-[#4ADE80] font-semibold text-xs md:text-md">
-                                <p>Personal</p>
-                            </div>
-                        </button>
+                            <Badge className="shrink-0">Personal</Badge>
+                        </Button>
                     )}
 
                     {/* For Organizations */}
                     {data.orgs && data.orgs.map((each: GithubOrg) => (
-                        <div className="relative" key={each.login}>
-                            <button type="button" className="w-full bg-[#161B22] border border-[#2A2F36] rounded-md p-3 flex flex-row justify-between items-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer disabled:opacity-20" disabled>
-                                <div className="flex space-x-3 items-center md:space-x-6 w-[80%]">
+                        <Card className="relative py-0" key={each.login}>
+                            <CardContent className="flex w-full min-w-0 items-center justify-between gap-3 p-4 opacity-55">
+                                <div className="flex min-w-0 flex-1 items-center gap-3 md:gap-6">
                                     {/* img */}
-                                    <img src={each.avatar_url} alt={`${each.name ?? each.login}`} className="rounded-xl" width={48} height={48} />
+                                    <img src={each.avatar_url} alt={`${each.name ?? each.login}`} className="shrink-0 rounded-xl" width={48} height={48} />
                                     {/* name */}
-                                    <span className="space-y-2">
-                                        <h1 className="font-semibold md:text-xl capitalize">{each.login}</h1>
-                                        <p className="line-clamp-2 text-sm text-graySubtextColor">{each.description ?? ""}</p>
+                                    <span className="min-w-0 flex-1 space-y-2">
+                                        <h1 className="break-words font-semibold capitalize md:text-xl">{each.login}</h1>
+                                        <p className="line-clamp-2 break-words text-sm text-graySubtextColor [overflow-wrap:anywhere]">{each.description ?? ""}</p>
                                     </span>
                                 </div>
                                 {/* type */}
-                                <div className=" capitalize bg-[#172524] rounded-full px-3 py-0.5 h-fit text-secondaryTextColor border border-[#1A4029] font-semibold text-xs md:text-md">
-                                    <p>Organization</p>
-                                </div>
-                            </button>
-                            <span className="bg-secondaryTextColor/40 text-xs absolute top-2 right-1 px-4 py-1 rounded-full">
-                                Under Construction
-                            </span>
-                        </div>
+                                <Badge variant="outline" className="shrink-0">Organization</Badge>
+                            </CardContent>
+                            <Badge variant="secondary" className="absolute right-2 top-2">Coming soon</Badge>
+                        </Card>
                     ))}
 
                 </section>
