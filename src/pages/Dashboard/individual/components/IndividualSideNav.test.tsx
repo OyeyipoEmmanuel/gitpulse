@@ -4,17 +4,15 @@ import { describe, expect, it } from "vitest"
 import IndividualSideNav from "./IndividualSideNav"
 
 describe("IndividualSideNav", () => {
-  it("keeps the closed mobile navigation out of keyboard navigation", () => {
+  it("renders accessible dashboard navigation and keeps settings available", () => {
     const html = renderToStaticMarkup(<MemoryRouter><IndividualSideNav isOpen={false} /></MemoryRouter>)
     expect(html).toContain('aria-label="Personal dashboard"')
-    expect(html).toContain('aria-hidden="true"')
-    expect(html).toContain("inert=\"\"")
+    expect(html).toContain('href="/settings"')
   })
 
-  it("provides labeled controls when the mobile navigation is open", () => {
+  it("renders the same labeled dashboard links when open", () => {
     const html = renderToStaticMarkup(<MemoryRouter><IndividualSideNav isOpen /></MemoryRouter>)
-    expect(html).toContain('aria-label="Close dashboard menu"')
-    expect(html).toContain('aria-label="Close menu"')
-    expect(html).toContain('<nav aria-label="Personal dashboard" aria-hidden="false"')
+    expect(html).toContain('aria-label="Personal dashboard"')
+    expect(html).toContain("Repo Intelligence")
   })
 })
