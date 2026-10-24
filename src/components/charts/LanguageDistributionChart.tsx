@@ -15,17 +15,17 @@ const LanguageDistributionChart = ({ data }: {
       <BarChart data={data} margin={{ bottom: 40, left:-20 }} >
         <XAxis
           dataKey="language"
-          tick={{ fill: "#8b949e", fontSize: 11 }}
+          tick={{ fill: "#8B949E", fontSize: 11 }}
           angle={-45} 
           textAnchor="end"      
           interval={0}          
         />
-        <YAxis tick={{ fill: "#8b949e", fontSize: 11 }} unit="%" />
+        <YAxis tick={{ fill: "#8B949E", fontSize: 11 }} unit="%" />
         <Tooltip
           formatter={(value) => [`${value}%`, "Usage"]}
           contentStyle={{
-            background: "#161b22",
-            border: "1px solid #30363d",
+            background: "#161B22",
+            border: "1px solid #30363D",
             borderRadius: "6px",
             color: "#e6edf3",
             fontSize: "12px",
