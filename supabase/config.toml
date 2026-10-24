@@ -1,0 +1,5 @@
+[functions.account-actions]
+# The function handles OPTIONS itself and validates the caller's bearer token
+# with auth.getUser. Disabling gateway verification prevents unauthenticated
+# browser preflight requests from being rejected before CORS headers are sent.
+verify_jwt = false
