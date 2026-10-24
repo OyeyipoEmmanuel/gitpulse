@@ -5,12 +5,12 @@ interface GradeCalculator {
 }
 
 const GRADE_COLORS: Record<string, string> = {
-  A: "#238636", // green
-  B: "#1F6FEB", // blue
-  C: "#EAB308", // yellow
-  D: "#F97316", // orange
-  E: "#EF4444", // red
-  F: "#7D8590", // gray
+  A: "#238636",
+  B: "#1F6FEB",
+  C: "#EAB308",
+  D: "#F97316",
+  E: "#EF4444",
+  F: "#7D8590",
 };
 
 export const gradeCalculator = (scores: number[]): GradeCalculator | null => {
