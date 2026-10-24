@@ -1,5 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface DashboardTopNavProps {
   onMenuToggle?: () => void;
@@ -13,15 +14,18 @@ const DashboardTopNav = ({
   const label = parts[parts.length - 1] ?? "";
 
   return (
-    <div className="sticky top-0 z-50 bg-[#11151C] border-b border-[#191D24] p-4 flex items-center gap-3">
+    <div className="sticky top-0 z-40 flex h-16 items-center gap-3 border-b bg-background/85 px-4 backdrop-blur-xl">
       {onMenuToggle && (
-        <button
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
           onClick={onMenuToggle}
-          className="md:hidden text-[#94A3B8] hover:text-white transition-colors"
+          className="md:hidden"
           aria-label="Open menu"
         >
           <Menu size={22} />
-        </button>
+        </Button>
       )}
       <p className="font-semibold text-white text-xl capitalize">{label}</p>
 
