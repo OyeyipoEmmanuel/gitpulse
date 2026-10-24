@@ -5,6 +5,7 @@ import { GitHubDataError } from "@/lib/githubErrors"
 import { useFetchCareerSnapshot } from "@/services/individualDashboardCalls/fetchCareerSnapshotDatas"
 import { useAuthStore } from "@/store/authStore"
 import type { RepositoryNode, TotalContributionObjectType, ProfileCardDetails } from "@/types"
+import { Button } from "@/components/ui/button"
 import { useRef, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { useParams } from "react-router-dom"
@@ -189,7 +190,7 @@ const IndividualCareerSnapshot = () => {
 
     if (error) return <ErrorToast message={error.message} onRetry={() => void refetch()} />
     if (contributionError) return <ErrorToast message={contributionError.message} onRetry={() => void refetchContributions()} />
-    if (isPending || loading || contributionsLoading) return <LoadingSpinner className="text-green-500 w-32 h-32" />
+    if (isPending || loading || contributionsLoading) return <LoadingSpinner className="text-white w-32 h-32" />
 
 
     const githubAge = getTimeAgo(data?.userProfile?.createdAt)
@@ -246,17 +247,18 @@ const IndividualCareerSnapshot = () => {
             <section className="py-4 px-4 flex flex-col gap-12">
                 <div className="flex flex-col justify-between md:flex-row">
                     <p className="text-graySubtextColor">A high-fidelity analysis of your engineering journey on Github.</p>
-                    <button
+                    <Button
                         type="button"
                         data-export-exclude="true"
                         onClick={downloadAsPng}
                         disabled={isDownloading}
                         aria-busy={isDownloading}
-                        className="w-fit self-end tracking-tight bg-[#248637] rounded-xs text-center px-6 py-2 md:self-start text-white text-lg font-semibold cursor-pointer hover:opacity-70 transition-all duration-200 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                        size="lg"
+                        className="w-fit self-end md:self-start"
                     >
                         <MdOutlineFileDownload className={`text-xl ${isDownloading ? "animate-spin" : ""}`} />
                         <span>{isDownloading ? "Generating..." : "Download as PNG"}</span>
-                    </button>
+                    </Button>
                     {downloadError && <p role="alert" data-export-exclude="true" className="mt-2 text-sm text-red-400">{downloadError}</p>}
                 </div>
 
@@ -264,7 +266,7 @@ const IndividualCareerSnapshot = () => {
                 {/* Row 1 */}
                 <section className="">
                     <Card className="w-full grid grid-cols-1 md:grid-cols-3 ">
-                        <div className="p-5 md:border-b-none md:border-r border-b border-[#2A2F36] flex flex-col gap-3">
+                        <div className="p-5 md:border-b-none md:border-r border-b border-[#30363D] flex flex-col gap-3">
                             <p className="text-graySubtextColor uppercase text-[12px] font-bold tracking-wider">github age</p>
                             <span className="flex text-white numbersFont">
                                 {/* Years */}
@@ -276,7 +278,7 @@ const IndividualCareerSnapshot = () => {
                                 <p className="self-end pl-1 text-graySubtextColor  tracking-wider">{githubAge.months > 0 && "months"}</p>
                             </span>
                         </div>
-                        <div className="p-5 md:border-b-none md:border-r border-b border-[#2A2F36] flex flex-col gap-3">
+                        <div className="p-5 md:border-b-none md:border-r border-b border-[#30363D] flex flex-col gap-3">
                             <p className="text-graySubtextColor uppercase text-[12px] font-bold tracking-wider">all-time contributions</p>
                             <span className="flex gap-2">
                                 <GrLineChart className="text-secondaryTextColor self-center" />
@@ -313,7 +315,7 @@ const IndividualCareerSnapshot = () => {
                         </div>
                     </Card>
 
-                    <div className="bg-[#0F1D1B] border border-[#133120] rounded-lg p-5 flex flex-col justify-between gap-6">
+                    <div className="rounded-lg border border-[#133120] bg-[#0F1D1B] p-5 flex flex-col justify-between gap-6">
                         <span className="flex justify-between">
                             <p className="text-secondaryTextColor uppercase text-[12px] font-bold tracking-widest">busiest year ever</p>
                             <IoStarSharp className="text-3xl text-[#238636]" />
@@ -331,7 +333,7 @@ const IndividualCareerSnapshot = () => {
                 </section>
 
                 {/* Row 3 */}
-                <section className="border border-[#20252C] rounded-[8px] flex flex-col md:flex-row gap-8 p-1">
+                <section className="border border-[#21262D] rounded-[8px] flex flex-col md:flex-row gap-8 p-1">
                     <div className="profileCardGlassBg w-full md:w-[40%] rounded-[8px] p-6 flex flex-col gap-8 border border-[#2B3438]">
                         {/* row 1 */}
                         <div className="flex items-center gap-4">
