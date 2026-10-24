@@ -2,7 +2,7 @@ import { Suspense, type ReactNode } from "react";
 import { Navigate, type RouteObject } from "react-router-dom";
 import LandingLayout, { ProtectedRoute } from "../components/layouts/Layouts";
 import { LoadingSpinner } from "@/components/ui/spinner";
-import { AskBob, AuthCallback, Dashboard, IndividualCareerSnapshot, IndividualDashboard, IndividualProductivity, IndividualProfile, IndividualRepoIntelligence, IndividualReportCard, LandingPage, NotFoundPage, OrganizationComingSoon, OrganizationDashboard, RouteErrorPage, SelectAcount } from "./LazyPages";
+import { AskBob, AuthCallback, Dashboard, IndividualCareerSnapshot, IndividualDashboard, IndividualProductivity, IndividualProfile, IndividualRepoIntelligence, IndividualReportCard, IndividualSettings, LandingPage, NotFoundPage, OrganizationComingSoon, OrganizationDashboard, RouteErrorPage, SelectAcount } from "./LazyPages";
 
 const load = (page: ReactNode) => <Suspense fallback={<LoadingSpinner label="Loading page" />}>{page}</Suspense>;
 
@@ -49,6 +49,7 @@ export const routes: RouteObject[] = [
                             { path: "dev-report-card", element: load(<IndividualReportCard />) },
                             { path: "career-snapshot", element: load(<IndividualCareerSnapshot />) },
                             { path: "ask-bob", element: load(<AskBob />) },
+                            { path: "settings", element: load(<IndividualSettings />) },
                             { path: "*", element: load(<NotFoundPage />) },
                         ]
                     },
