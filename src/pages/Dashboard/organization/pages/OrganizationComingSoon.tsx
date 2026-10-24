@@ -1,6 +1,7 @@
 import { Building2, Sparkles } from "lucide-react"
 import { useLocation } from "react-router-dom"
 import Card from "../../individual/components/Card"
+import { Badge } from "@/components/ui/badge"
 
 const featureNames: Record<string, string> = {
     profile: "Organization profiles",
@@ -22,10 +23,10 @@ const OrganizationComingSoon = () => {
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#30363D] bg-[#21262D]">
                     <Building2 aria-hidden="true" className="h-8 w-8 text-[#3FB950]" />
                 </div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-[#238636]/40 bg-[#238636]/10 px-3 py-1.5 text-sm font-semibold text-[#3FB950]">
+                <Badge variant="outline" className="mx-auto gap-2 border-[#238636]/40 bg-[#238636]/10 px-3 py-1.5 text-sm text-[#3FB950]">
                     <Sparkles aria-hidden="true" className="h-4 w-4" />
                     Coming soon
-                </div>
+                </Badge>
                 <h1 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">{feature}</h1>
                 <p className="mx-auto mt-4 max-w-lg leading-7 text-[#8B949E]">
                     This organization feature is not available yet. Personal dashboard analytics remain fully supported while we build it.
