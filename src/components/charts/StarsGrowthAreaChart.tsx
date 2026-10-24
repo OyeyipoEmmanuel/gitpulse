@@ -34,8 +34,8 @@ const StarsGrowthAreaChart = ({ data }: { data: { date: string; stars: number | 
                     labelFormatter={(date) => new Date(date).toLocaleDateString()}
                     contentStyle={{
                         padding: "10px",
-                        background: "#161b22",
-                        border: "1px solid #30363d",
+                        background: "#161B22",
+                        border: "1px solid #30363D",
                         borderRadius: "6px",
                         color: "#e6edf3",
                         fontSize: "16px",
