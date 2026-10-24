@@ -15,7 +15,7 @@ describe("feedback states", () => {
     const html = renderToStaticMarkup(<ErrorToast message="Request failed" onRetry={vi.fn()} />)
     expect(html).toContain('role="alert"')
     expect(html).toContain("Request failed")
-    expect(html).toContain('<button type="button"')
+    expect(html).toMatch(/<button[^>]*type="button"/)
     expect(html).toContain("Retry")
   })
 })
