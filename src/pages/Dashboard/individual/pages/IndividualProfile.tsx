@@ -26,7 +26,7 @@ const IndividualProfile = () => {
   if (error) return <ErrorToast message={error.message} onRetry={() => void refetch()} />
 
 
-  if (isPending) return (<LoadingSpinner className="text-green-500 w-32 h-32" />)
+  if (isPending) return (<LoadingSpinner className="text-white w-32 h-32" />)
 
   const user = data?.graphqlData?.user
   const repos = data?.graphqlData?.user?.repositories
@@ -132,7 +132,7 @@ const IndividualProfile = () => {
       <section className="flex flex-col space-y-5">
 
         {/* Profile view */}
-        <div className="w-full rounded-[8px] border border-[#23282E] md:px-0">
+        <div className="w-full rounded-[8px] border border-[#30363D] md:px-0">
 
           {/* Infos */}
           <div className="bg-[#161B22] flex p-4 md:p-8 flex-col space-y-3 md:space-y-0 md:flex-row md:space-x-4 items-center">
@@ -225,7 +225,7 @@ const IndividualProfile = () => {
                 <Card key={idx} className="p-5 flex flex-col gap-3">
                   <span className="flex justify-between items-center">
                     <h2 className="text-lg font-semibold text-white capitalize">{repo.name}</h2>
-                    <aside className="px-3 py-0.5 text-[10px] rounded-full bg-[#21262D] text-graySubtextColor border border-[#2E343B]">{repo.isPrivate ? "Private" : "Public"}</aside>
+                    <aside className="px-3 py-0.5 text-[10px] rounded-full bg-[#21262D] text-graySubtextColor border border-[#30363D]">{repo.isPrivate ? "Private" : "Public"}</aside>
                   </span>
 
                   <p className="line-clamp-2 text-graySubtextColor capitalize text-sm">{repo.description}</p>
@@ -261,10 +261,10 @@ const IndividualProfile = () => {
 
             <aside className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {starred.map((each: StarredRepo, idx: number) => (
-                <Card className="p-3 flex items-center space-x-3" key={idx}>
-                  <img src={each.owner.avatar_url} alt={each.owner.login} className="rounded-sm border border-[#2E343B]" width={40} height={40} />
-                  <div className="flex flex-col">
-                    <p className="font-semibold text-white capitalize">{each.name}</p>
+                <Card className="flex-row items-center gap-3 p-3" key={idx}>
+                  <img src={each.owner.avatar_url} alt={each.owner.login} className="shrink-0 rounded-sm border border-[#2E343B]" width={40} height={40} />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-semibold text-white capitalize">{each.name}</p>
                     <p className="line-clamp-2 text-sm text-graySubtextColor">{each.description}</p>
                   </div>
                 </Card>
@@ -281,7 +281,7 @@ const IndividualProfile = () => {
             <h1 className="text-white font-semibold tracking-wider text-center text-lg">Recent Activities</h1>
           </aside>
 
-          <Card className="divide-y divide-[#23282E]">
+          <Card className="divide-y divide-[#30363D]">
             {recentEvents?.length > 0 ? recentEvents.map((event: GithubEvent) => {
               const { icon, color, label, sub, message } = getEventInfo(event)
               return (
