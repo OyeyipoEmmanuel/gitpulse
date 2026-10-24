@@ -1,61 +1,29 @@
-import { CircleCheckBig, CreditCard } from "lucide-react"
+import { Check } from "lucide-react"
 import GitHubSignInButton from "@/components/auth/GitHubSignInButton"
-import { type PricingData } from "../../../types"
-import Button from "./Button"
+import InteractiveCard from "./InteractiveCard"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 
-const datas: PricingData[] = [
-    {
-        header: "Individual Developer",
-        price: 0,
-        duration: 0,
-        isAvailable: true,
-        features: ["Personal Dashboard & Insight", "Unlimited public repo analysis", "Visualized commit history", "PR Performance", "Issue Statistics"]
-    },
-    {
-        header: "Organization",
-        price: 6.50,
-        duration: 1,
-        isAvailable: false,
-        features: ["Team wide productivity tracking", "Private repository deep-dives", "Contributor Insight", "SLA & Priority support"]
-    },
+const plans = [
+  { name: "Individual", description: "For developers who want a sharper view of their work.", price: "Free", suffix: "forever", available: true, featured: true, features: ["Personal dashboard and insights", "Unlimited public repository analysis", "Contribution and commit trends", "Pull request performance", "Shareable career snapshot"] },
+  { name: "Organization", description: "For teams that want a shared view of engineering momentum.", price: "$6.50", suffix: "per member / month", available: false, featured: false, features: ["Team-wide productivity signals", "Private repository deep-dives", "Contributor insights", "Team health reporting", "Priority support"] },
 ]
 
-const PriceCard = () => {
-    return (
-        <main className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {datas.map((data, idx) => (
-                <section className="bg-[#161B22] py-6 px-10 border border-[#22272E] flex flex-col justify-between" key={idx}>
-                    <div className="flex flex-col space-y-5 py-4">
-                        <h1 className="text-white text-3xl font-semibold">{data.header}</h1>
-                        <span className="flex items-end space-x-1">
-                            <h3 className="text-6xl font-extrabold text-white">{data.price == 0 ? "Free " : `$${data.price} `}</h3>
-                            <p className="text-xl text-[#8B949E] "> / {data.duration == 0 ? "forever" : data.duration == 1 ? "year" : "years"}</p>
-                        </span>
-                    </div>
-
-                    <div className="flex flex-col space-y-4 py-6">
-                        {data.features.map((feature, idx) => (
-                            <span className="flex items-center space-x-4 text-[#8B949E] text-lg" key={idx}>
-                                <CircleCheckBig color="#238636" strokeWidth={1.5} />
-                                <p>{feature}</p>
-                            </span>
-                        ))}
-                    </div>
-
-                    <div>
-                        {
-                            data.price == 0 ?
-                                // if Free, login
-                                <GitHubSignInButton />
-                                :
-                                <Button label="Checkout Now" icon={<CreditCard color="#ffffff" strokeWidth={1.25} />} bgColor="#30363D" textColor="#ffffff" />
-                        }
-                        {/* <LogIn color="#ffffff" strokeWidth={1.25} /> */}
-                    </div>
-                </section>
-            ))}
-        </main>
-    )
+export default function PriceCard() {
+  return (
+    <div className="mx-auto grid max-w-5xl gap-5 lg:grid-cols-2">
+      {plans.map(plan => (
+        <InteractiveCard key={plan.name} intensity={3} glow="35, 134, 54" className={`landing-price-card relative flex flex-col overflow-hidden rounded-[1.75rem] border p-5 ${plan.featured ? "border-[#238636]/60 bg-gradient-to-b from-[#238636]/15 to-white/[0.025]" : "border-white/8 bg-white/[0.025]"}`}>
+          {/* {!plan.available && <span className="absolute right-6 top-6 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[#929ba7]">Coming soon</span>} */}
+          <Badge variant={plan.featured ? "default" : "outline"}>{plan.name}</Badge>
+          <h3 className="mt-4 max-w-sm text-2xl font-semibold tracking-tight">{plan.description}</h3>
+          <div className="mt-8 flex items-end gap-3"><span className="numbersFont text-5xl font-semibold tracking-tight">{plan.price}</span><span className="mb-1 text-sm text-[#77818f]">{plan.suffix}</span></div>
+          <ul className="my-9 flex flex-1 flex-col gap-4">
+            {plan.features.map(feature => <li key={feature} className="flex items-start gap-3 text-[#8B949E]"><span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#238636]/20 text-[#3FB950]"><Check aria-hidden="true" className="h-3 w-3" /></span><span>{feature}</span></li>)}
+          </ul>
+          {plan.available ? <GitHubSignInButton label="Start with GitHub" /> : <Button type="button" variant="outline" size="lg" disabled className="w-full">Organization access coming soon</Button>}
+        </InteractiveCard>
+      ))}
+    </div>
+  )
 }
-
-export default PriceCard
