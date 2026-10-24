@@ -43,7 +43,7 @@ const DeadReposCard = ({ deadRepos }: { deadRepos: DeadRepo[] }) => {
 
       <div className="grid grid-cols-1 gap-3 pt-5">
         {deadRepos.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((repo, idx) => (
-          <div key={idx} className="border border-[#2C3239] bg-[#0D1117] flex flex-col p-4 gap-1">
+          <div key={idx} className="border border-[#30363D] bg-[#0D1117] flex flex-col p-4 gap-1">
             <p className="font-semibold text-white">{repo.name}</p>
             <p className="text-[11px] text-graySubtextColor">Last commit: {timeAgo(repo.updatedAt)}</p>
           </div>
