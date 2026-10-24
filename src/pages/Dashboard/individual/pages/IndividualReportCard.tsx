@@ -15,7 +15,7 @@ const IndividualReportCard = () => {
     const { data, isPending, error, refetch } = useFetchReportCardDatas(params.username ?? null)
 
     if (error) return <ErrorToast message={error.message} onRetry={() => void refetch()} />
-    if (isPending) return (<LoadingSpinner className="text-green-500 w-32 h-32" />)
+    if (isPending) return (<LoadingSpinner className="text-white w-32 h-32" />)
 
     //code quality
     const codeQuality = codeQualityDimension(data.codeQuality.user.pullRequests.nodes, data.repoData.overview.user.repositories.nodes)
@@ -106,7 +106,7 @@ const IndividualReportCard = () => {
             <section className="grid grid-cols-1 gap-5 md:grid-cols-3">
                 {reportCardDimensions.length > 0 && reportCardDimensions.map((report, idx) => (
                     <Card className={`border-none flex flex-col ${report.label === "Maintenance" ? "md:col-span-2" : ""}`} key={idx}>
-                        <div className="bg-[#0D1117] flex flex-row items-center justify-between p-5 border border-[#20252C]">
+                        <div className="bg-[#0D1117] flex flex-row items-center justify-between p-5 border border-[#21262D]">
                             <span className="gap-1 flex flex-col">
                                 <p className="uppercase numbersFont text-xs font-semibold tracking-wider text-graySubtextColor">dimension 0{idx + 1}</p>
                                 <p className="capitalize text-white font-semibold text-xl">{report.label}</p>
@@ -118,7 +118,7 @@ const IndividualReportCard = () => {
 
                         {/* Regular stats */}
                         {Object.keys(report.stats).length > 0 && (
-                            <div className="border border-[#20252C] flex flex-col divide-y divide-[#20252C]">
+                            <div className="border border-[#21262D] flex flex-col divide-y divide-[#21262D]">
                                 {Object.entries(report.stats).map(([label, value]) => (
                                     <div key={label} className="flex flex-row items-center justify-between px-5 py-3">
                                         <p className="text-graySubtextColor text-sm">{label}</p>
@@ -137,7 +137,7 @@ const IndividualReportCard = () => {
 
                         {/* Bar stats */}
                         {report.bars && report.bars.length > 0 && (
-                            <div className="border border-[#20252C] p-5 flex flex-col gap-5 md:flex-row md:gap-8">
+                            <div className="border border-[#21262D] p-5 flex flex-col gap-5 md:flex-row md:gap-8">
                                 {report.bars.map((bar) => (
                                     <div key={bar.label} className="flex flex-col gap-2 flex-1">
                                         <div className="flex justify-between items-center">
