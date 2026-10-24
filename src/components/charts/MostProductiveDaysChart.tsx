@@ -24,20 +24,20 @@ const MostProductiveDaysChart = ({ data }: MostProductiveDaysChartProps) => {
         <BarChart data={data} margin={{ left: -20, bottom: 0 }}>
           <XAxis
             dataKey="day"
-            tick={{ fill: "#8b949e", fontSize: 12 }}
-            axisLine={{ stroke: "#30363d" }}
+            tick={{ fill: "#8B949E", fontSize: 12 }}
+            axisLine={{ stroke: "#30363D" }}
             tickLine={false}
           />
           <YAxis
-            tick={{ fill: "#8b949e", fontSize: 11 }}
+            tick={{ fill: "#8B949E", fontSize: 11 }}
             axisLine={false}
             tickLine={false}
           />
           <Tooltip
             formatter={(value) => [value, "Contributions"]}
             contentStyle={{
-              background: "#161b22",
-              border: "1px solid #30363d",
+              background: "#161B22",
+              border: "1px solid #30363D",
               borderRadius: "6px",
               color: "#e6edf3",
               fontSize: "12px",
