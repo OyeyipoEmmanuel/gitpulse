@@ -1,5 +1,6 @@
 import { Bar, BarChart, XAxis, YAxis, Tooltip, Cell, ResponsiveContainer } from "recharts"
 import Card from "@/pages/Dashboard/individual/components/Card"
+import MetricTooltip from "@/components/ui/metric-tooltip"
 
 interface MostProductiveDaysChartProps {
   data: { day: string; contributions: number }[]
@@ -12,7 +13,7 @@ const MostProductiveDaysChart = ({ data }: MostProductiveDaysChartProps) => {
   return (
     <Card className="p-5 flex flex-col gap-4 w-full">
       <div>
-        <p className="text-white text-lg font-semibold">Most Productive Days</p>
+        <div className="flex items-center gap-1"><p className="text-white text-lg font-semibold">Most Productive Days</p><MetricTooltip label="Most Productive Days">Total GitHub contributions grouped by weekday over the past 12 months.</MetricTooltip></div>
         <p className="text-xs flex gap-1 text-graySubtextColor pt-2">
           Based on your contribution activity over the{" "}
           <span className="text-secondaryTextColor font-extrabold">past 12 months</span>
