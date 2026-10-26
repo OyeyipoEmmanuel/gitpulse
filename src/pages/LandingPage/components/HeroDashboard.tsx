@@ -40,7 +40,7 @@ export default function HeroDashboard() {
         <div aria-hidden="true" className="landing-panel-glow absolute inset-0" />
         <div className="relative">
           <div className="flex items-center justify-between border-b border-white/8 pb-5">
-            <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#238636]/20 text-[#3FB950]"><Activity aria-hidden="true" className="h-5 w-5" /></div><div><p className="text-sm font-semibold text-white">Developer pulse</p><p className="mt-0.5 text-xs text-[#737e8c]">Live profile preview</p></div></div>
+            <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#238636]/20 text-[#3FB950]"><Activity aria-hidden="true" className="h-5 w-5" /></div><div><p className="text-sm font-semibold text-white">Developer momentum</p><p className="mt-0.5 text-xs text-[#737e8c]">Live profile preview</p></div></div>
           </div>
           <div className="mt-5 flex gap-1 overflow-x-auto rounded-xl border border-white/8 bg-black/20 p-1" aria-label="Preview analytics view">
             {(Object.keys(views) as ViewName[]).map(name => <Button key={name} type="button" size="sm" variant="ghost" aria-pressed={activeView === name} onClick={() => setActiveView(name)} className={`min-w-max flex-1 ${activeView === name ? "bg-[#238636]/20 text-[#3FB950] shadow-sm" : "text-muted-foreground"}`}>{name}</Button>)}
