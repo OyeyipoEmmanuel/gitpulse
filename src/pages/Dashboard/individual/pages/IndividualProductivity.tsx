@@ -10,6 +10,7 @@ import type { YoYReview } from "@/types";
 import { MostProductiveDaysChart, HourlyPerformanceChart } from "@/components/charts";
 import { getCurrentStreak, getLongestStreak } from "@/lib/streakCalculator";
 import { calculateConsistencyScore } from "@/lib/consistencyCalculator";
+import MetricTooltip from "@/components/ui/metric-tooltip";
 
 function formatDate(dateStr: string) {
     return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
@@ -86,7 +87,7 @@ const IndividualProductivity = () => {
                     {/* Longest Stream */}
                     <Card className="p-5 flex flex-col gap-8 justify-between w-full min-h-[160px]">
                         <span className="flex flex-row justify-between items-center">
-                            <p className="text-graySubtextColor uppercase font-extrabold tracking-widest text-xs">Longest streak</p>
+                            <span className="flex items-center gap-1"><p className="text-graySubtextColor uppercase font-extrabold tracking-widest text-xs">Longest streak</p><MetricTooltip label="Longest streak">Consecutive calendar days containing at least one GitHub contribution.</MetricTooltip></span>
                             <FaFire className="text-secondaryTextColor" />
                         </span>
 
@@ -106,7 +107,7 @@ const IndividualProductivity = () => {
                     {/* Current Streak */}
                     <Card className="p-5 flex flex-col gap-8 justify-between w-full min-h-[160px]">
                         <span className="flex flex-row justify-between items-center">
-                            <p className="text-graySubtextColor uppercase font-extrabold tracking-widest text-xs">current streak</p>
+                            <span className="flex items-center gap-1"><p className="text-graySubtextColor uppercase font-extrabold tracking-widest text-xs">current streak</p><MetricTooltip label="Current streak">Consecutive calendar days up to today containing at least one GitHub contribution.</MetricTooltip></span>
                             <IoIosFlash className="text-secondaryTextColor" />
                         </span>
 
@@ -123,8 +124,8 @@ const IndividualProductivity = () => {
                 {/* Consistency Score */}
                 <Card className="md:w-[40%] h-fit p-5 flex flex-col gap-18">
                     <div>
-                        <span className="flex justify-between items-center">
-                            <p className="text-white text-lg font-semibold">Consistency Score</p>
+                        <span className="flex justify-between items-center gap-3">
+                            <span className="flex items-center gap-1"><p className="text-white text-lg font-semibold">Consistency Score</p><MetricTooltip label="Consistency Score">Percentage of days with at least one GitHub contribution during the last 12 months.</MetricTooltip></span>
                             <p className="uppercase text-sm px-3 py-0.5 font-semibold rounded-md" style={{
                                 color: consistencyScore.color,
                                 backgroundColor: `${consistencyScore.color}22`,
@@ -142,7 +143,7 @@ const IndividualProductivity = () => {
                 {/* YoY Performance */}
                 <Card className="md:w-[30%] h-fit p-5">
                     <span>
-                        <p className="text-white text-lg font-semibold">This time last year</p>
+                        <span className="flex items-center gap-1"><p className="text-white text-lg font-semibold">This time last year</p><MetricTooltip label="Year-over-year growth">Compares contributions from January through the current month with the same period last year.</MetricTooltip></span>
                         <p className="text-xs text-graySubtextColor pt-2">How you compare to the same period last year</p>
                     </span>
 
