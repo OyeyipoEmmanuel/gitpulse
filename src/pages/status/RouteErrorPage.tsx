@@ -7,7 +7,7 @@ const RouteErrorPage = () => {
     const title = isRouteErrorResponse(error) && error.status === 404 ? "Page not found" : "Something went wrong"
     const message = isRouteErrorResponse(error) && error.status === 404
         ? "The requested page could not be found."
-        : "GitPulse could not display this page. Reload it to try again."
+        : "GitArc could not display this page. Reload it to try again."
 
     return (
         <main className="flex min-h-screen items-center justify-center bg-[#0D1117] px-4 py-12 text-white">
