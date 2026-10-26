@@ -8,6 +8,16 @@ import Card from "../components/Card"
 import { calculateConsistencyScore } from "@/lib/consistencyCalculator"
 import { getCurrentStreak } from "@/lib/streakCalculator"
 import { codeQualityDimension, collaborationDimension, consistencyDimension, maintenanceDimension, openSourceDimension } from "@/lib/reportCardCalculator"
+import MetricTooltip from "@/components/ui/metric-tooltip"
+
+const reportCardTooltips: Record<string, string> = {
+    "Code Quality": "The grade is based on pull-request merge rate. Average PR size and PRs per repository provide additional context.",
+    "Consistency": "Based on the percentage of days with at least one contribution during the last 12 months.",
+    "Collaboration": "Based on pull-request reviews and merged contributions to repositories you do not own.",
+    "Open Source": "Measures merged pull requests made to repositories owned by other developers or organizations.",
+    "Maintenance": "Measures how many of your repositories include a README and a recognized license.",
+}
+
 const IndividualReportCard = () => {
     const params = useParams()
     const reportCardDimensions: ReportCardDimesions[] = []
@@ -75,7 +85,7 @@ const IndividualReportCard = () => {
                 }}>
                     <p className="font-extrabold text-6xl ">{overallGrade?.grade ?? "—"}</p>
                 </div>
-                <p className="tracking-wider font-semibold text-graySubtextColor uppercase pt-5">overall developer score</p>
+                <div className="flex items-center gap-1 pt-5"><p className="tracking-wider font-semibold text-graySubtextColor uppercase">overall developer score</p><MetricTooltip label="Overall Developer Score">The average of every available report-card dimension. A: 80+, B: 65+, C: 50+, D: 40+, E: 30+, and F: below 30.</MetricTooltip></div>
 
                 {/* Comment */}
                 <p className="text-xl text-center text-white pt-3 max-w-md font-semibold">
@@ -109,7 +119,7 @@ const IndividualReportCard = () => {
                         <div className="bg-[#0D1117] flex flex-row items-center justify-between p-5 border border-[#21262D]">
                             <span className="gap-1 flex flex-col">
                                 <p className="uppercase numbersFont text-xs font-semibold tracking-wider text-graySubtextColor">dimension 0{idx + 1}</p>
-                                <p className="capitalize text-white font-semibold text-xl">{report.label}</p>
+                                <div className="flex items-center gap-1"><p className="capitalize text-white font-semibold text-xl">{report.label}</p><MetricTooltip label={report.label}>{reportCardTooltips[report.label]}</MetricTooltip></div>
                             </span>
                             <p className="font-extrabold text-3xl" style={{
                                 color: report.gradeColor ?? "#1F6FEB"
