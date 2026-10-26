@@ -18,6 +18,7 @@ import { IoStarSharp } from "react-icons/io5";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { BsPatchCheck } from "react-icons/bs";
 import { toPng } from "html-to-image";
+import MetricTooltip from "@/components/ui/metric-tooltip";
 
 
 
@@ -161,7 +162,7 @@ const IndividualCareerSnapshot = () => {
             })
 
             const link = document.createElement("a")
-            link.download = "gitpulse-career-snapshot.png"
+            link.download = "gitarc-career-snapshot.png"
             link.href = dataUrl
             link.click()
         } catch {
@@ -279,14 +280,14 @@ const IndividualCareerSnapshot = () => {
                             </span>
                         </div>
                         <div className="p-5 md:border-b-none md:border-r border-b border-[#30363D] flex flex-col gap-3">
-                            <p className="text-graySubtextColor uppercase text-[12px] font-bold tracking-wider">all-time contributions</p>
+                            <div className="flex items-center gap-1"><p className="text-graySubtextColor uppercase text-[12px] font-bold tracking-wider">all-time contributions</p><MetricTooltip label="All-time Contributions">Total GitHub contributions found across your available contribution history.</MetricTooltip></div>
                             <span className="flex gap-2">
                                 <GrLineChart className="text-secondaryTextColor self-center" />
                                 <p className="text-secondaryTextColor tracking-wider text-5xl numbersFont">{totalContributionCount ?? "..."}</p>
                             </span>
                         </div>
                         <div className="p-5 flex flex-col gap-3">
-                            <p className="text-graySubtextColor uppercase text-[12px] font-bold tracking-wider">os contribution count</p>
+                            <div className="flex items-center gap-1"><p className="text-graySubtextColor uppercase text-[12px] font-bold tracking-wider">os contribution count</p><MetricTooltip label="Open-source Contribution Count">Merged pull requests made to repositories you do not own.</MetricTooltip></div>
 
                             <span className="flex gap-1">
                                 <p className="text-5xl font-extrabold text-white">{OSContributionCount}</p>
@@ -351,7 +352,7 @@ const IndividualCareerSnapshot = () => {
                                 <p className="text-white text-3xl font-semibold numbersFont pt-2">{profileCardDetails.githubAge.years} <span className="text-graySubtextColor text-sm font-medium">Years</span></p>
                             </div>
                             <div className="">
-                                <p className="text-graySubtextColor uppercase text-[12px] font-bold tracking-wider">Top Technology</p>
+                                <div className="flex items-center gap-1"><p className="text-graySubtextColor uppercase text-[12px] font-bold tracking-wider">Top Technology</p><MetricTooltip label="Top Technology">Determined from the primary languages used across your repositories.</MetricTooltip></div>
                                 <p className="text-white text-3xl font-semibold numbersFont pt-2">{profileCardDetails.topTechnology?.name}</p>
                             </div>
                         </div>
@@ -359,7 +360,7 @@ const IndividualCareerSnapshot = () => {
                         {/* Row 3 */}
                         <div className="flex items-center gap-2">
                             <BsPatchCheck className="text-secondaryTextColor text-xl" />
-                            <p className="text-graySubtextColor uppercase text-xs tracking-wider font-semibold">GITPULSE CERTIFIED ANALYST</p>
+                            <p className="text-graySubtextColor uppercase text-xs tracking-wider font-semibold">GITARC CERTIFIED ANALYST</p>
                         </div>
                     </div>
                     <div className="flex flex-col w-full justify-between md:w-[60%]">
@@ -368,23 +369,27 @@ const IndividualCareerSnapshot = () => {
                                 [
                                     {
                                         label: "Total Code Act",
-                                        value: profileCardDetails.totalCodeAct
+                                        value: profileCardDetails.totalCodeAct,
+                                        tooltip: "Total GitHub contributions found across your available contribution history."
                                     },
                                     {
                                         label: "Longest Streak",
-                                        value: profileCardDetails.longestStreak
+                                        value: profileCardDetails.longestStreak,
+                                        tooltip: "Your longest run of consecutive contribution days during the current calendar year."
                                     },
                                     {
                                         label: "Member Tier",
-                                        value: profileCardDetails.memberTier
+                                        value: profileCardDetails.memberTier,
+                                        tooltip: "Based on GitHub account age: Rising under 2 years, Established from 2 years, and Veteran from 5 years."
                                     },
                                     {
                                         label: "Oss Merged",
-                                        value: profileCardDetails.ossMerged
+                                        value: profileCardDetails.ossMerged,
+                                        tooltip: "Merged pull requests made to repositories you do not own."
                                     },
                                 ].map((each, idx) => (
                                     <div key={idx} className="">
-                                        <p className="text-graySubtextColor uppercase text-xs tracking-wider font-semibold">{each.label}</p>
+                                        <div className="flex items-center gap-1"><p className="text-graySubtextColor uppercase text-xs tracking-wider font-semibold">{each.label}</p><MetricTooltip label={each.label}>{each.tooltip}</MetricTooltip></div>
                                         <p className="text-secondaryTextColor font-semibold text-3xl numbersFont pt-3">{each.value}  <span className="text-graySubtextColor text-[18px] font-medium">{each.label == "Longest Streak" && "days"}</span> </p>
                                     </div>
                                 ))
@@ -393,7 +398,7 @@ const IndividualCareerSnapshot = () => {
 
                         {/* Wrapped footer */}
                         <div className="mt-6 border-t border-[#2B3438] flex items-center justify-between py-6">
-                            <p className="text-graySubtextColor font-semibold tracking-wider">&copy;GitPulse</p>
+                            <p className="text-graySubtextColor font-semibold tracking-wider">&copy;GitArc</p>
                         </div>
                     </div>
                 </section>
