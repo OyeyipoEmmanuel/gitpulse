@@ -59,7 +59,7 @@ Logging out is not GitHub token revocation. It ends the local Supabase session
 (including same-origin tabs) without intentionally logging out other devices or
 deleting the saved database row. Existing OAuth grants/tokens are not automatically
 stripped of earlier privileges by this code change. To fully remove a previously
-granted `public_repo` permission, the user should review/revoke the old GitPulse
+granted `public_repo` permission, the user should review/revoke the old GitArc
 grant in GitHub's authorized OAuth apps, then reconnect. Do not revoke unrelated
 apps or credentials.
 
@@ -146,7 +146,7 @@ Still run with an authorized test account before release:
 1. Sign in through GitHub, confirm account selection and profile loading, then reload.
 2. Open a second tab, log out in the first, and confirm both clear protected content.
 3. Sign in as another GitHub account and confirm no previous account's data appears.
-4. Revoke the GitPulse test-account grant on GitHub; refresh a dashboard and confirm
+4. Revoke the GitArc test-account grant on GitHub; refresh a dashboard and confirm
    the reconnect screen, then reconnect successfully.
 5. Simulate a temporary network/database failure and verify retry, not a forced
    credential-revocation message. Verify a failed sign-out is visibly reported.
