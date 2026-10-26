@@ -1,4 +1,5 @@
 import type { CompetencyLevelChartProps } from "@/types";
+import MetricTooltip from "@/components/ui/metric-tooltip";
 
 
 const CircularProgress = ({ value }: { value: number | null }) => {
@@ -72,6 +73,10 @@ const Progress = ({ data }: { data: CompetencyLevelChartProps }) => {
 
     return (
         <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-1 text-sm font-medium text-graySubtextColor">
+                <span>Activity mix</span>
+                <MetricTooltip label="Activity mix">Each percentage represents that activity's share of your commits, pull requests, reviews, and issues during the last 12 months.</MetricTooltip>
+            </div>
             {res.map((each, idx) => (
                 <div className="grid grid-cols-3 gap-4 w-full items-center" key={idx}>
                     <p className="w-full text-graySubtextColor text-sm">{each.label}</p>
