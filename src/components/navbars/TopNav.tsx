@@ -11,7 +11,7 @@ export default function TopNav() {
   return (
     <nav className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/80 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-5">
-        <Link to="/" aria-label="GitPulse home" className="flex items-center gap-2.5 text-white">
+        <Link to="/" aria-label="GitArc home" className="flex items-center gap-2.5 text-white">
           <Logo width={34} height={34}/>
         </Link>
         <div className="hidden items-center gap-7 text-sm text-muted-foreground lg:flex">
