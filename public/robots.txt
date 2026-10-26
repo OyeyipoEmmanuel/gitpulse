@@ -3,4 +3,4 @@ Allow: /
 Disallow: /dashboard/
 Disallow: /auth/
 
-Sitemap: https://gitpulsee.vercel.app/sitemap.xml
+Sitemap: https://gitarc.vercel.app/sitemap.xml
