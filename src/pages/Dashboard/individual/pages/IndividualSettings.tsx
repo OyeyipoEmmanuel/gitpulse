@@ -44,7 +44,7 @@ export default function IndividualSettings() {
     <main className="min-h-[calc(100vh-65px)] bg-background px-4 py-4 text-foreground">
       <div className="mx-auto">
         <div className="">
-          <p className="mt-3 leading-7 text-muted-foreground">Manage your GitHub connection and control what GitPulse keeps.</p>
+          <p className="mt-3 leading-7 text-muted-foreground">Manage your GitHub connection and control what GitArc keeps.</p>
         </div>
 
         {error && <div role="alert" className="mt-7 flex items-start gap-3 rounded-xl border border-destructive/25 bg-destructive/10 p-4 text-sm text-destructive"><AlertTriangle aria-hidden="true" className="mt-0.5 size-4 shrink-0" /><p>{error}</p></div>}
@@ -71,7 +71,7 @@ export default function IndividualSettings() {
           <CardContent>
             <Separator className="mb-5 bg-destructive/15" />
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-              <div className="max-w-xl"><h3 className="font-semibold">Delete GitPulse account</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">Permanently delete your account, revoke GitHub access and remove your stored credentials.</p></div>
+              <div className="max-w-xl"><h3 className="font-semibold">Delete GitArc account</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">Permanently delete your account, revoke GitHub access and remove your stored credentials.</p></div>
               <Button type="button" variant="destructive" size="lg" onClick={() => openConfirmation("delete-account")}><Trash2 aria-hidden="true" />Delete account</Button>
             </div>
           </CardContent>
@@ -82,8 +82,8 @@ export default function IndividualSettings() {
         <AlertDialogContent className="border border-border bg-popover">
           <AlertDialogHeader>
             <AlertDialogMedia className={deleting ? "text-destructive" : "text-foreground"}>{deleting ? <Trash2 aria-hidden="true" /> : <Unplug aria-hidden="true" />}</AlertDialogMedia>
-            <AlertDialogTitle>{deleting ? "Delete your GitPulse account?" : "Disconnect GitHub?"}</AlertDialogTitle>
-            <AlertDialogDescription>{deleting ? "This permanently removes your GitPulse account and stored GitHub credentials. This action cannot be undone." : "GitPulse will revoke its GitHub authorization, remove your stored access token and sign you out. You can reconnect later."}</AlertDialogDescription>
+            <AlertDialogTitle>{deleting ? "Delete your GitArc account?" : "Disconnect GitHub?"}</AlertDialogTitle>
+            <AlertDialogDescription>{deleting ? "This permanently removes your GitArc account and stored GitHub credentials. This action cannot be undone." : "GitArc will revoke its GitHub authorization, remove your stored access token and sign you out. You can reconnect later."}</AlertDialogDescription>
           </AlertDialogHeader>
           {deleting && <label className="text-sm font-medium">Type <strong>DELETE</strong> to confirm<Input autoFocus value={confirmation} onChange={event => setConfirmation(event.target.value)} disabled={busy} className="mt-2" placeholder="DELETE" /></label>}
           <AlertDialogFooter>
