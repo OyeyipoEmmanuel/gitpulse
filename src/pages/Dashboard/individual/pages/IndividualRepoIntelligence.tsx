@@ -7,6 +7,7 @@ import Card from "../components/Card"
 import BarsForMostActiveRepos from "../components/BarsForMostActiveRepos"
 import DeadReposCard from "../components/DeadReposCard"
 import StarsGrowthAreaChart from "@/components/charts/StarsGrowthAreaChart"
+import MetricTooltip from "@/components/ui/metric-tooltip"
 
 
 
@@ -113,7 +114,7 @@ const IndividualRepoIntelligence = () => {
         </div>
 
         <div className="flex w-full p-5 flex-col border-b md:border-b-0 md:border-r border-[#30363D] space-y-2">
-          <p className="text-graySubtextColor font-semibold tracking-tighter text-sm uppercase">most used language</p>
+          <div className="flex items-center gap-1"><p className="text-graySubtextColor font-semibold tracking-tighter text-sm uppercase">most used language</p><MetricTooltip label="Most used language">The most common primary language across your repositories, not the language with the most lines of code.</MetricTooltip></div>
           <p className="text-3xl text-white font-semibold">{mostUsedLang}</p>
         </div>
 
@@ -123,7 +124,7 @@ const IndividualRepoIntelligence = () => {
         {/* Most Active repos */}
         <Card className="w-full md:w-[60%] p-5" >
           <div>
-            <h1 className="text-white font-semibold text-lg">Most Active Repos</h1>
+            <div className="flex items-center gap-1"><h1 className="text-white font-semibold text-lg">Most Active Repos</h1><MetricTooltip label="Most Active Repositories">Repositories ranked by commits made during the last 30 days.</MetricTooltip></div>
             <p className="text-graySubtextColor text-xs pt-1">Commits in last 30days</p>
           </div>
 
@@ -138,7 +139,7 @@ const IndividualRepoIntelligence = () => {
         {/* Stars Growth */}
          <Card className="w-full p-5" >
           <div>
-            <h1 className="text-white font-semibold text-lg">Star Velocity</h1>
+            <div className="flex items-center gap-1"><h1 className="text-white font-semibold text-lg">Star Velocity</h1><MetricTooltip label="Star Velocity">New stars received across all your repositories during the last 30 days.</MetricTooltip></div>
             <p className="text-graySubtextColor text-xs pt-1">New stars received across your repositories in the last 30 days</p>
           </div>
 
