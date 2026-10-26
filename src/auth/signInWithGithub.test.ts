@@ -7,11 +7,11 @@ afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); oauth.mockReset() }
 
 describe("GitHub OAuth initiation", () => {
   it("requests read scopes without repository write permission", async () => {
-    vi.stubEnv("VITE_APP_URL", "https://gitpulse.example/")
+    vi.stubEnv("VITE_APP_URL", "https://gitarc.example/")
     oauth.mockResolvedValue({ error: null })
     await signInWithGithub()
     expect(oauth).toHaveBeenCalledExactlyOnceWith({ provider: "github", options: {
-      redirectTo: "https://gitpulse.example/auth/callback", scopes: "read:user user:email read:org",
+      redirectTo: "https://gitarc.example/auth/callback", scopes: "read:user user:email read:org",
     } })
   })
   it("uses the current origin when no app URL is configured", async () => {
@@ -22,7 +22,7 @@ describe("GitHub OAuth initiation", () => {
     expect(oauth.mock.calls[0][0].options.redirectTo).toBe("http://localhost:5173/auth/callback")
   })
   it("reports initiation failures without exposing provider error details", async () => {
-    vi.stubEnv("VITE_APP_URL", "https://gitpulse.example")
+    vi.stubEnv("VITE_APP_URL", "https://gitarc.example")
     oauth.mockResolvedValue({ error: new Error("private provider details") })
     await expect(signInWithGithub()).rejects.toThrow("GitHub sign-in could not be started")
   })
