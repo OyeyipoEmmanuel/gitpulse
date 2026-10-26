@@ -1,5 +1,6 @@
 import { Area, AreaChart, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
 import Card from "@/pages/Dashboard/individual/components/Card"
+import MetricTooltip from "@/components/ui/metric-tooltip"
 
 interface HourlyPerformanceChartProps {
   data: { hour: string; events: number }[]
@@ -10,7 +11,7 @@ const HourlyPerformanceChart = ({ data }: HourlyPerformanceChartProps) => {
   return (
     <Card className="p-5 flex flex-col gap-4 w-full">
       <div>
-        <p className="text-white text-lg font-semibold">Hourly Performance</p>
+        <div className="flex items-center gap-1"><p className="text-white text-lg font-semibold">Hourly Performance</p><MetricTooltip label="Hourly Performance">Calculated from up to 300 recent public GitHub events. Times are displayed in your local timezone.</MetricTooltip></div>
         <p className="text-xs flex gap-1 text-graySubtextColor pt-2">
           Based on up to <span className="text-secondaryTextColor font-extrabold">300 recent public GitHub events</span>
         </p>
