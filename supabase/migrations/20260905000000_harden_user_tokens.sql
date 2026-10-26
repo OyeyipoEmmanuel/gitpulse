@@ -1,4 +1,4 @@
--- Restrict browser access to the operations GitPulse actually performs.
+-- Restrict browser access to the operations GitArc actually performs.
 -- This migration does not read, rotate, delete, or expose existing tokens.
 
 begin;
