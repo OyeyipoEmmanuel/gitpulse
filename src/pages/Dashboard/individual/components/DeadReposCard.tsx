@@ -2,6 +2,7 @@ import { useState } from "react"
 import Card from "./Card"
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
 import { TriangleAlert } from "lucide-react"
+import MetricTooltip from "@/components/ui/metric-tooltip"
 
 const PAGE_SIZE = 5
 
@@ -16,24 +17,16 @@ function timeAgo(dateStr: string) {
 interface DeadRepo {
   name: string
   updatedAt: string
-  diskUsage: number
-}
-
-function formatStorage(kb: number) {
-  if (kb < 1024) return `${kb}KB`
-  if (kb < 1024 * 1024) return `${(kb / 1024).toFixed(1)}MB`
-  return `${(kb / (1024 * 1024)).toFixed(1)}GB`
 }
 
 const DeadReposCard = ({ deadRepos }: { deadRepos: DeadRepo[] }) => {
   const [page, setPage] = useState(1)
   const totalPages = Math.ceil(deadRepos.length / PAGE_SIZE)
-  const totalStorage = deadRepos.reduce((acc, r) => acc + r.diskUsage, 0)
 
   return (
     <Card className="w-full md:w-[40%] p-5">
       <div>
-        <h1 className="text-white font-semibold text-lg">Most Dead Repos</h1>
+        <div className="flex items-center gap-1"><h1 className="text-white font-semibold text-lg">Most Dead Repos</h1><MetricTooltip label="Dead Repositories">Repositories with no recorded update for at least six months.</MetricTooltip></div>
         <p className="text-graySubtextColor text-xs pt-1">No activity for 6months+</p>
       </div>
 
@@ -89,11 +82,11 @@ const DeadReposCard = ({ deadRepos }: { deadRepos: DeadRepo[] }) => {
         <div className="mt-6 flex flex-col gap-1 bg-[#2A1D24] border border-[#54272C] rounded-md px-4 py-3">
           <span className="flex items-center space-x-2">
               <TriangleAlert size={15} className="text-[#C44440] shrink-0 mt-0.5" />
-              <p className="text-[#C44440] font-semibold">Storage Optimization</p>
+              <p className="text-[#C44440] font-semibold">Repository cleanup</p>
           </span>
         
           <p className="text-graySubtextColor text-xs">
-            Archiving these <span className="font-extrabold">{deadRepos.length} repos</span> could free up <span className="font-extrabold">{formatStorage(totalStorage)}</span> of workspace storage.
+            These <span className="font-extrabold">{deadRepos.length} repos</span> have not been updated in at least six months. Consider archiving repositories you no longer maintain to reduce clutter.
           </p>
         </div>
       )}
