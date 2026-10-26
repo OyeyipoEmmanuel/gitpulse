@@ -1,4 +1,4 @@
-# GitPulse
+# GitArc
 
 ## Regression checks
 
