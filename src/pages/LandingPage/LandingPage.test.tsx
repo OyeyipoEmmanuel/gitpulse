@@ -14,6 +14,6 @@ describe("landing page", () => {
     expect(html).toContain('id="workflow"')
     expect(html).toContain('id="showcase"')
     expect(html).toContain("Explore my GitHub")
-    expect(html).toContain("GITPULSE")
+    expect(html).toContain("GITARC")
   })
 })
