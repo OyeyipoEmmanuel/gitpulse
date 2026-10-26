@@ -15,7 +15,7 @@ const features = [
 
 const steps = [
   { number: "01", title: "Connect GitHub", description: "Sign in securely and choose the account you want to explore." },
-  { number: "02", title: "GitPulse maps the signal", description: "Your activity is organized into focused, useful analytics—not another data dump." },
+  { number: "02", title: "GitArc maps the signal", description: "Your activity is organized into focused, useful analytics—not another data dump." },
   { number: "03", title: "Use the story", description: "Review your momentum, improve repository health and share a career-ready snapshot." },
 ]
 
@@ -33,7 +33,7 @@ export default function LandingPage() {
               Your GitHub activity finally tells a <span className="landing-gradient-text">story.</span>
             </h1>
             <p className="landing-hero-description mt-7 max-w-xl text-pretty text-lg leading-8 text-[#8B949E] sm:text-xl">
-              GitPulse turns repositories, contributions and collaboration into a clear view of how you build, grow and create impact.
+              GitArc turns repositories, contributions and collaboration into a clear view of how you build, grow and create impact.
             </p>
             <div className="landing-hero-actions mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
               <GitHubSignInButton label="Explore my GitHub" />
@@ -68,7 +68,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl">
           <Reveal className="max-w-3xl">
             <h2 className="mt-4 text-balance text-4xl font-semibold tracking-[-0.04em] sm:text-5xl lg:text-6xl">Less noise. More insight into the work you do.</h2>
-            <p className="mt-5 max-w-2xl text-lg leading-8 text-[#8B949E]">GitPulse brings the important parts of your engineering activity together, then gives each signal the context it deserves.</p>
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-[#8B949E]">GitArc brings the important parts of your engineering activity together, then gives each signal the context it deserves.</p>
           </Reveal>
           <div className="mt-14 grid gap-4 md:grid-cols-3">
             {features.map((feature, index) => {
@@ -148,11 +148,11 @@ export default function LandingPage() {
       </section> */}
 
       <section className="px-4 pb-10 pt-12 sm:px-6 lg:px-8">
-        <Reveal><div className="landing-cta mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-[#238636]/40 px-6 py-14 text-center sm:px-12 sm:py-20"><Code2 aria-hidden="true" className="mx-auto h-9 w-9 text-[#3FB950]" /><h2 className="mx-auto mt-6 max-w-3xl text-balance text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">There is more in your GitHub history than green squares.</h2><p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-[#8B949E]">Connect your account and turn the work you have already done into insight you can use.</p><div className="mt-8 flex justify-center"><GitHubSignInButton label="Build my GitPulse" /></div></div></Reveal>
+        <Reveal><div className="landing-cta mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-[#238636]/40 px-6 py-14 text-center sm:px-12 sm:py-20"><Code2 aria-hidden="true" className="mx-auto h-9 w-9 text-[#3FB950]" /><h2 className="mx-auto mt-6 max-w-3xl text-balance text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">There is more in your GitHub history than green squares.</h2><p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-[#8B949E]">Connect your account and turn the work you have already done into insight you can use.</p><div className="mt-8 flex justify-center"><GitHubSignInButton label="Build my GitArc" /></div></div></Reveal>
       </section>
 
-      <footer className="px-4 py-10 sm:px-6 lg:px-8"><div className="mx-auto flex max-w-7xl flex-col gap-5 border-t border-white/8 pt-8 text-sm text-[#7D8590] sm:flex-row sm:items-center sm:justify-between"><p>© {new Date().getFullYear()} GitPulse. Developer insight, made useful.</p><div className="flex items-center gap-5"><BarChart3 aria-hidden="true" className="h-4 w-4 text-white" /><span>Built around real GitHub data</span></div></div></footer>
-      <div aria-hidden="true" className="pb-12 landing-footer-wordmark numbersFont select-none overflow-hidden text-center font-black leading-[0.56] tracking-[0.06em]">GITPULSE</div>
+      <footer className="px-4 py-10 sm:px-6 lg:px-8"><div className="mx-auto flex max-w-7xl flex-col gap-5 border-t border-white/8 pt-8 text-sm text-[#7D8590] sm:flex-row sm:items-center sm:justify-between"><p>© {new Date().getFullYear()} GitArc. Developer insight, made useful.</p><div className="flex items-center gap-5"><BarChart3 aria-hidden="true" className="h-4 w-4 text-white" /><span>Built around real GitHub data</span></div></div></footer>
+      <div aria-hidden="true" className="pb-12 landing-footer-wordmark numbersFont select-none overflow-hidden text-center font-black leading-[0.56] tracking-[0.06em]">GITARC</div>
     </main>
   )
 }
