@@ -9,7 +9,7 @@ const views = [
     title: "Find the rhythm behind your best work.",
     description: "See when you are most productive, how consistently you contribute and whether your momentum is building over time.",
     image: "/media/productivity-dashboard.png",
-    alt: "GitPulse productivity dashboard showing streaks, consistency, growth and activity charts",
+    alt: "GitArc productivity dashboard showing streaks, consistency, growth and activity charts",
     icon: Activity,
     accent: "+629%",
     accentLabel: "yearly growth",
@@ -20,7 +20,7 @@ const views = [
     title: "Turn GitHub activity into a story people remember.",
     description: "Translate years of building into a focused view of your strongest technologies, open-source impact and developer growth.",
     image: "/media/career-snapshot-dashboard.png",
-    alt: "GitPulse career snapshot showing mastered languages, experience, contributions and open-source impact",
+    alt: "GitArc career snapshot showing mastered languages, experience, contributions and open-source impact",
     icon: BriefcaseBusiness,
     accent: "Established",
     accentLabel: "developer tier",
@@ -103,9 +103,13 @@ export default function DashboardShowcase() {
               <div className="landing-showcase-window relative overflow-hidden rounded-2xl border border-white/12 bg-[#090D12] shadow-[0_35px_100px_rgba(0,0,0,.55)] sm:rounded-[1.4rem]">
                 <div className="flex h-9 items-center gap-1.5 border-b border-white/8 bg-[#151A21] px-4 sm:h-11">
                   <span className="h-2.5 w-2.5 rounded-full bg-[#FF5F57]" /><span className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]" /><span className="h-2.5 w-2.5 rounded-full bg-[#28C840]" />
-                  <div className="mx-auto hidden rounded-md border border-white/6 bg-black/20 px-12 py-1 text-[0.65rem] text-[#7D8590] sm:block">gitpulse.app / dashboard</div>
+                  <div className="mx-auto hidden rounded-md border border-white/6 bg-black/20 px-12 py-1 text-[0.65rem] text-[#7D8590] sm:block">gitarc.app / dashboard</div>
                 </div>
                 <img key={activeView.image} src={activeView.image} alt={activeView.alt} className="landing-showcase-image block h-auto w-full" loading="lazy" decoding="async" />
+                <div aria-hidden="true" className="absolute left-0 top-9 z-10 flex h-[9.7%] w-[15%] items-center gap-[3%] border-b border-r border-white/10 bg-[#161B22] px-[1.2%] sm:top-11">
+                  <img src="/images/logo.svg" alt="" className="h-[58%] w-auto" />
+                  <span className="whitespace-nowrap text-[clamp(.34rem,1vw,.82rem)] font-semibold tracking-[-0.04em] text-white">Git<span className="text-[#3FB950]">Arc</span></span>
+                </div>
                 <div aria-hidden="true" className="landing-showcase-sheen absolute inset-0" />
               </div>
 
