@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="GitArc arc mark">
+  <path d="M12 51C12 31 25 14 51 12" fill="none" stroke="#0D1117" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="12" cy="51" r="6" fill="#0D1117"/>
+  <circle cx="27" cy="26" r="6" fill="#0D1117"/>
+  <circle cx="51" cy="12" r="6" fill="#0D1117"/>
+</svg>
