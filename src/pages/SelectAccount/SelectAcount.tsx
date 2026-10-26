@@ -29,7 +29,7 @@ const SelectAcount = () => {
             {/* <TopNav /> */}
             <section className="pt-32 min-h-screen max-w-sm px-4 mx-auto md:max-w-3xl flex flex-col items-center justify-center text-white">
                 <div className="flex flex-col pb-12 space-y-1 text-center justify-center items-center">
-                    <img src="/images/logo.svg" alt="GitPulse Logo" width={40} height={40} className="animate-pulse" loading="lazy" />
+                    <img src="/images/logo.svg" alt="GitArc Logo" width={40} height={40} loading="lazy" />
 
                     <h1 className="font-semibold text-xl md:text-3xl">Select account</h1>
                     <p className="text-graySubtextColor">Choose an account to view analytics for</p>
