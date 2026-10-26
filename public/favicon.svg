@@ -1,6 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="GitPulse">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="GitArc">
   <rect width="64" height="64" rx="15" fill="#0D1117"/>
-  <path d="M11 32h9l5-10 8 21 6-13 4 8h10" fill="none" stroke="#3FB950" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="11" cy="32" r="3" fill="#3FB950"/>
-  <circle cx="53" cy="38" r="3" fill="#3FB950"/>
+  <path d="M12 51C12 31 25 14 51 12" fill="none" stroke="#3FB950" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="12" cy="51" r="6" fill="#3FB950"/>
+  <circle cx="27" cy="26" r="6" fill="#3FB950"/>
+  <circle cx="51" cy="12" r="6" fill="#3FB950"/>
 </svg>
