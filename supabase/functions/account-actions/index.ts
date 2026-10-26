@@ -21,7 +21,7 @@ async function revokeGithubGrant(token: string, clientId: string, clientSecret: 
       "Authorization": `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
       "Content-Type": "application/json",
       "X-GitHub-Api-Version": "2022-11-28",
-      "User-Agent": "GitPulse-account-controls",
+      "User-Agent": "GitArc-account-controls",
     },
     body: JSON.stringify({ access_token: token }),
   })
@@ -90,7 +90,7 @@ Deno.serve(async request => {
   if (payload.action === "delete-account") {
     const { error: deleteUserError } = await admin.auth.admin.deleteUser(user.id)
     if (deleteUserError) {
-      return json({ success: false, error: "GitHub was disconnected, but the GitPulse account could not be deleted. Please retry." }, 500)
+      return json({ success: false, error: "GitHub was disconnected, but the GitArc account could not be deleted. Please retry." }, 500)
     }
   }
 
